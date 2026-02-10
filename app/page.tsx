@@ -1,8 +1,278 @@
 "use client";
+import PricingCalculator from "./components/PricingCalculator";
+import WeatherWidget from "./components/WeatherWidget";
+import { useEffect, useState, useRef } from "react";
 
 export default function Home() {
+  const [isMuted, setIsMuted] = useState(false);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
+  const isPlayingRef = useRef(false);
+  const cycleCanvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Light cycles riding the grid in the bottom half
+  useEffect(() => {
+    const canvas = cycleCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    const GRID = 100; // grid line spacing (200px cells, lines at 25%/75% = every 100px)
+    const SPEED = 2;
+    const TRAIL_LENGTH = 80;
+    const GRID_SCROLL_SPEED = 200 / 15; // grid moves 200px per 15s
+
+    interface Dot {
+      x: number;
+      y: number;
+      dx: number;
+      dy: number;
+      trail: { x: number; y: number }[];
+      r: number;
+      g: number;
+      b: number;
+    }
+
+    const snap = (v: number) => Math.round(v / GRID) * GRID;
+
+    const blue: Dot = {
+      x: snap(canvas.width * 0.2),
+      y: snap(canvas.height * 0.6),
+      dx: SPEED, dy: 0,
+      trail: [],
+      r: 59, g: 130, b: 246
+    };
+
+    const red: Dot = {
+      x: snap(canvas.width * 0.8),
+      y: snap(canvas.height * 0.85),
+      dx: -SPEED, dy: 0,
+      trail: [],
+      r: 239, g: 68, b: 68
+    };
+
+    let lastTime = performance.now();
+    let gridOffset = 0;
+    let frameId = 0;
+
+    const animate = (time: number) => {
+      const dt = (time - lastTime) / 1000;
+      lastTime = time;
+      gridOffset = (gridOffset + GRID_SCROLL_SPEED * dt) % GRID;
+
+      const halfH = canvas.height / 2;
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const nearestHLine = (y: number) => {
+        const adjusted = y - gridOffset;
+        return Math.round(adjusted / GRID) * GRID + gridOffset;
+      };
+      const nearestVLine = (x: number) => Math.round(x / GRID) * GRID;
+
+      const updateDot = (dot: Dot) => {
+        dot.trail.push({ x: dot.x, y: dot.y });
+        if (dot.trail.length > TRAIL_LENGTH) dot.trail.shift();
+
+        dot.x += dot.dx;
+        dot.y += dot.dy;
+
+        // Drift with grid scroll when moving horizontally
+        if (dot.dx !== 0) {
+          dot.y += GRID_SCROLL_SPEED * dt;
+        }
+
+        const onVLine = Math.abs(dot.x - nearestVLine(dot.x)) < SPEED + 0.5;
+        const onHLine = Math.abs(dot.y - nearestHLine(dot.y)) < SPEED + 1;
+
+        if (onVLine && onHLine && Math.random() < 0.03) {
+          if (dot.dx !== 0) {
+            dot.x = nearestVLine(dot.x);
+            dot.dy = Math.random() > 0.5 ? SPEED : -SPEED;
+            dot.dx = 0;
+          } else {
+            dot.y = nearestHLine(dot.y);
+            dot.dx = Math.random() > 0.5 ? SPEED : -SPEED;
+            dot.dy = 0;
+          }
+        }
+
+        // Constrain to bottom half
+        if (dot.y < halfH) {
+          dot.y = halfH + GRID;
+          dot.dy = SPEED;
+          dot.dx = 0;
+          dot.trail = [];
+        }
+        if (dot.y > h) {
+          dot.y = halfH + GRID;
+          dot.trail = [];
+        }
+        if (dot.x < 0) { dot.x = w; dot.trail = []; }
+        if (dot.x > w) { dot.x = 0; dot.trail = []; }
+      };
+
+      const drawDot = (dot: Dot) => {
+        for (let i = 0; i < dot.trail.length; i++) {
+          const alpha = (i / dot.trail.length) * 0.7;
+          const size = 2 + (i / dot.trail.length) * 2;
+          ctx.fillStyle = `rgba(${dot.r},${dot.g},${dot.b},${alpha})`;
+          ctx.shadowColor = `rgba(${dot.r},${dot.g},${dot.b},${alpha})`;
+          ctx.shadowBlur = 10;
+          ctx.fillRect(dot.trail[i].x - size / 2, dot.trail[i].y - size / 2, size, size);
+        }
+        ctx.fillStyle = `rgb(${dot.r},${dot.g},${dot.b})`;
+        ctx.shadowColor = `rgb(${dot.r},${dot.g},${dot.b})`;
+        ctx.shadowBlur = 30;
+        ctx.fillRect(dot.x - 4, dot.y - 4, 8, 8);
+        ctx.shadowBlur = 0;
+      };
+
+      updateDot(blue);
+      updateDot(red);
+      drawDot(blue);
+      drawDot(red);
+
+      frameId = requestAnimationFrame(animate);
+    };
+
+    frameId = requestAnimationFrame(animate);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Initialize Web Audio API for lo-fi background music
+    const initAudio = () => {
+      if (isPlayingRef.current) return;
+      isPlayingRef.current = true;
+
+      const AudioContextClass = window.AudioContext || (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const audioContext = new AudioContextClass();
+      audioContextRef.current = audioContext;
+
+      const masterGain = audioContext.createGain();
+      masterGain.gain.value = 0.15; // Low volume for background
+      masterGain.connect(audioContext.destination);
+      gainNodeRef.current = masterGain;
+
+      // Lo-fi bass note pattern with melody
+      const playLoFiLoop = () => {
+        const bassNotes = [110, 146.83, 164.81, 130.81]; // A2, D3, E3, C3
+        const melodyNotes = [440, 587.33, 659.25, 523.25]; // A4, D5, E5, C5
+        let beatCount = 0;
+
+        const playBeat = () => {
+          if (!audioContextRef.current) return;
+
+          const currentTime = audioContext.currentTime;
+          const noteIndex = beatCount % 4;
+
+          // Bass note
+          const bass = audioContext.createOscillator();
+          const bassGain = audioContext.createGain();
+          bass.type = 'sine';
+          bass.frequency.value = bassNotes[noteIndex];
+
+          bassGain.gain.setValueAtTime(0, currentTime);
+          bassGain.gain.linearRampToValueAtTime(0.4, currentTime + 0.05);
+          bassGain.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.8);
+
+          bass.connect(bassGain);
+          bassGain.connect(masterGain);
+          bass.start(currentTime);
+          bass.stop(currentTime + 0.8);
+
+          // Melody note (plays on beats 0 and 2)
+          if (noteIndex % 2 === 0) {
+            const melody = audioContext.createOscillator();
+            const melodyGain = audioContext.createGain();
+            melody.type = 'square';
+            melody.frequency.value = melodyNotes[noteIndex];
+
+            melodyGain.gain.setValueAtTime(0, currentTime);
+            melodyGain.gain.linearRampToValueAtTime(0.08, currentTime + 0.1);
+            melodyGain.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.6);
+
+            melody.connect(melodyGain);
+            melodyGain.connect(masterGain);
+            melody.start(currentTime);
+            melody.stop(currentTime + 0.6);
+          }
+
+          // Hi-hat/click (every beat)
+          const noise = audioContext.createOscillator();
+          const noiseGain = audioContext.createGain();
+          noise.type = 'triangle';
+          noise.frequency.value = 8000 + Math.random() * 2000;
+
+          noiseGain.gain.setValueAtTime(0, currentTime);
+          noiseGain.gain.linearRampToValueAtTime(0.03, currentTime + 0.01);
+          noiseGain.gain.exponentialRampToValueAtTime(0.001, currentTime + 0.1);
+
+          noise.connect(noiseGain);
+          noiseGain.connect(masterGain);
+          noise.start(currentTime);
+          noise.stop(currentTime + 0.1);
+
+          beatCount++;
+          setTimeout(playBeat, 600); // ~100 BPM
+        };
+
+        playBeat();
+      };
+
+      playLoFiLoop();
+    };
+
+    // Start audio on user interaction to avoid autoplay restrictions
+    const handleUserInteraction = () => {
+      initAudio();
+      document.removeEventListener('click', handleUserInteraction);
+    };
+
+    document.addEventListener('click', handleUserInteraction);
+
+    return () => {
+      document.removeEventListener('click', handleUserInteraction);
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = isMuted ? 0 : 0.15;
+    }
+  }, [isMuted]);
+
   return (
     <div className="min-h-screen bg-black flex items-center justify-center overflow-hidden relative">
+      {/* Weather Widget */}
+      <WeatherWidget />
+
+      {/* Mute/Unmute Button */}
+      <button
+        onClick={() => setIsMuted(!isMuted)}
+        className="fixed top-3 right-3 sm:top-4 sm:right-4 z-50 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/50 border-2 border-cyan-400/50 flex items-center justify-center hover:bg-cyan-400/20 transition-all shadow-[0_0_20px_rgba(34,211,238,0.5)]"
+        aria-label={isMuted ? "Unmute" : "Mute"}
+      >
+        <span className="text-cyan-400 text-sm sm:text-lg">{isMuted ? "🔇" : "🔊"}</span>
+      </button>
+
       {/* Animated Grid Background - BIG GRID extending to horizon */}
       <div
         className="absolute inset-0 opacity-80"
@@ -31,7 +301,7 @@ export default function Home() {
       />
 
       {/* Tokyo-Style City Skyline - Buildings spanning entire width with depth */}
-      <div className="absolute top-1/2 left-0 right-0 h-96 flex items-end justify-start gap-0 -translate-y-full z-10" style={{perspective: '1000px'}}>
+      <div className="absolute top-1/2 left-0 right-0 h-48 sm:h-72 md:h-96 flex items-end justify-start gap-0 -translate-y-full z-0 scale-[0.5] sm:scale-75 md:scale-100 origin-bottom-left" style={{perspective: '1000px'}}>
         {/* Building 1 - Short */}
         <div className="w-20 h-48 bg-gradient-to-br from-gray-800 via-gray-900 to-black border-r-2 border-cyan-800 relative shadow-[8px_0_20px_rgba(0,0,0,0.9),-2px_0_10px_rgba(6,182,212,0.3)]">
           {/* Neon edge light */}
@@ -407,29 +677,64 @@ export default function Home() {
         <div className="absolute w-1 h-1 bg-cyan-200 rounded-full shadow-[0_0_10px_rgba(34,211,238,1)] animate-shootingStar9" style={{top: '-5%', left: '85%'}}></div>
       </div>
 
+      {/* Light Cycles - riding the grid in the bottom half */}
+      <canvas ref={cycleCanvasRef} className="absolute inset-0 pointer-events-none" style={{ zIndex: 5 }} />
+
       {/* Content */}
-      <div className="text-center space-y-8 p-8 z-10 relative">
-        {/* Main heading with TRON glow effect */}
-        <h1 className="text-6xl font-bold text-cyan-400 drop-shadow-[0_0_25px_rgba(34,211,238,0.9)]">
-          HELLO WORLD
-        </h1>
+      <div className="text-center space-y-4 sm:space-y-6 md:space-y-8 p-4 sm:p-6 md:p-8 z-20 relative">
+        {/* Main heading with ROBOCOP metallic chrome effect + sunburst */}
+        <div className="relative inline-block">
+          {/* Sunburst rays behind text */}
+          <div className="absolute inset-0 pointer-events-none z-0" style={{
+            background: 'conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(255,255,255,0.15) 10deg, transparent 20deg, transparent 40deg, rgba(255,255,255,0.1) 50deg, transparent 60deg, transparent 80deg, rgba(255,255,255,0.15) 90deg, transparent 100deg, transparent 120deg, rgba(255,255,255,0.08) 130deg, transparent 140deg, transparent 160deg, rgba(255,255,255,0.12) 170deg, transparent 180deg, transparent 200deg, rgba(255,255,255,0.15) 210deg, transparent 220deg, transparent 240deg, rgba(255,255,255,0.1) 250deg, transparent 260deg, transparent 280deg, rgba(255,255,255,0.15) 290deg, transparent 300deg, transparent 320deg, rgba(255,255,255,0.08) 330deg, transparent 340deg, transparent 360deg)',
+            filter: 'blur(2px)',
+            animation: 'sunRotate 20s linear infinite',
+            transform: 'scale(1.5)',
+            opacity: 0.6
+          }}></div>
+          {/* Bright center flash */}
+          <div className="absolute top-1/4 left-1/3 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 pointer-events-none z-5" style={{
+            background: 'radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.2) 20%, transparent 50%)',
+            filter: 'blur(15px)',
+            animation: 'flash 3s ease-in-out infinite'
+          }}></div>
+          <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-widest robocop-metallic relative z-10" style={{
+            fontFamily: 'Impact, "Arial Black", sans-serif',
+            letterSpacing: '0.1em',
+            background: 'linear-gradient(180deg, #ffffff 0%, #d4e8f0 10%, #a8c5d6 25%, #6b9cb5 45%, #3d6b85 65%, #1e3a4f 85%, #0a1820 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            filter: 'drop-shadow(0 0 40px rgba(168,197,214,0.9)) drop-shadow(0 0 20px rgba(107,156,181,1)) drop-shadow(0 6px 12px rgba(0,0,0,1)) drop-shadow(2px 2px 0px rgba(255,255,255,0.3))'
+          }}>
+            HELLO WORLD
+          </h1>
+          {/* Digital scanlines overlay */}
+          <div className="absolute inset-0 pointer-events-none z-20" style={{
+            background: 'repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)',
+            mixBlendMode: 'overlay'
+          }}></div>
+        </div>
 
         {/* Subheading */}
-        <h2 className="text-3xl text-cyan-300 drop-shadow-[0_0_15px_rgba(103,232,249,0.7)]">
+        <h2 className="text-xl sm:text-2xl md:text-3xl text-cyan-300 drop-shadow-[0_0_15px_rgba(103,232,249,0.7)]">
           Welcome to the Grid
         </h2>
 
         {/* Description text */}
-        <p className="text-xl text-cyan-200 max-w-2xl mx-auto">
+        <p className="text-base sm:text-lg md:text-xl text-cyan-200 max-w-2xl mx-auto px-2">
           Racing through the digital frontier on a light cycle!
         </p>
 
         {/* Glowing border box */}
-        <div className="border-2 border-cyan-400 p-6 mt-8 shadow-[0_0_30px_rgba(34,211,238,0.5)]">
-          <p className="text-cyan-100 text-lg">
+        <div className="border-2 border-cyan-400 p-3 sm:p-4 md:p-6 mt-4 sm:mt-6 md:mt-8 shadow-[0_0_30px_rgba(34,211,238,0.5)] mx-2 sm:mx-0">
+          <p className="text-cyan-100 text-sm sm:text-base md:text-lg">
             The grid is moving beneath you!
           </p>
         </div>
+
+        {/* Pricing Calculator */}
+        <PricingCalculator />
       </div>
 
       {/* CSS Animations - Grid movement, twinkling lights, and building depth */}
@@ -665,6 +970,28 @@ export default function Home() {
           animation: shootingStar9 3.1s linear infinite;
           animation-delay: 1.2s;
           box-shadow: 0 0 10px rgba(34, 211, 238, 1), 30px -30px 20px rgba(34, 211, 238, 0.5), 60px -60px 10px rgba(34, 211, 238, 0.2);
+        }
+
+        /* Sunburst rotation animation */
+        @keyframes sunRotate {
+          0% {
+            transform: scale(1.5) rotate(0deg);
+          }
+          100% {
+            transform: scale(1.5) rotate(360deg);
+          }
+        }
+
+        /* Flash animation */
+        @keyframes flash {
+          0%, 100% {
+            opacity: 0.3;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.8;
+            transform: scale(1.2);
+          }
         }
 
         /* Add architectural floor lines to make buildings look realistic */
