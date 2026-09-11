@@ -1,0 +1,20 @@
+# Local:  docker compose up --build        -> http://localhost:3000
+# Server: docker compose up -d --build     (behind Caddy, see docs/deploy)
+services:
+  web:
+    build: .
+    image: my-first-app:latest
+    restart: unless-stopped
+    ports:
+      # Local dev. On the server this line is replaced by compose.server.yaml,
+      # which binds to 127.0.0.1 (public, via Caddy) or the Tailscale IP (private).
+      - "3000:3000"
+    env_file:
+      - path: .env
+        required: false
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
