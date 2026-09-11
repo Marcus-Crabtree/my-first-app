@@ -19,3 +19,17 @@ test("pricing calculator updates the estimate when the plan changes", async ({ p
   await page.getByRole("button", { name: "Business" }).click();
   await expect(total).toContainText("$424");
 });
+
+test("reset to defaults restores the default estimate", async ({ page }) => {
+  await page.goto("/");
+  const total = page.getByText("Estimated total").locator("xpath=following-sibling::p[1]");
+
+  // Move inputs away from defaults, then reset.
+  await page.getByRole("button", { name: "Business" }).click();
+  await page.getByRole("button", { name: "Toggle premium support" }).click();
+  await page.getByRole("button", { name: "Monthly" }).click();
+  await expect(total).not.toContainText("$195");
+
+  await page.getByRole("button", { name: "Reset to defaults" }).click();
+  await expect(total).toContainText("$195"); // Team, 10 seats, annual, no premium
+});

@@ -33,4 +33,23 @@ describe("PricingCalculator", () => {
     // (49 + 18 * 10 + 99) * 0.85 = 278.8 -> "$279"
     expect(estimatedTotal()).toHaveTextContent("$279");
   });
+
+  it("should restore plan, seats, annual billing, and premium support to defaults", async () => {
+    const user = userEvent.setup();
+    render(<PricingCalculator />);
+
+    // Move every input away from its default.
+    await user.click(screen.getByRole("button", { name: "Business" }));
+    await user.click(screen.getByRole("button", { name: "Toggle premium support" }));
+    await user.click(screen.getByRole("button", { name: "Monthly" }));
+    // Business + premium + monthly is far from the default total.
+    expect(estimatedTotal()).not.toHaveTextContent("$195");
+
+    await user.click(screen.getByRole("button", { name: "Reset to defaults" }));
+
+    // Team, 10 seats, annual (-15%), no premium support: (49 + 18 * 10) * 0.85 -> "$195"
+    expect(estimatedTotal()).toHaveTextContent("$195");
+    // Annual discount line is only rendered when annual billing is on.
+    expect(screen.getByText(/Billed annually/)).toBeInTheDocument();
+  });
 });

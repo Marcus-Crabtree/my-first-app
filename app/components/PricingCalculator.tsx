@@ -273,7 +273,7 @@ export default function PricingCalculator() {
               }}
               className="rounded-lg border-2 border-pink-400/40 bg-black/30 px-4 py-2 text-sm text-pink-300 hover:bg-pink-400/10 hover:border-pink-400/60 transition"
             >
-              Reset
+              Reset to defaults
             </button>
 
             <button
