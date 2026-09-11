@@ -14,7 +14,7 @@ export default function Home() {
   useEffect(() => {
     const canvas = cycleCanvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     const resize = () => {
@@ -22,7 +22,7 @@ export default function Home() {
       canvas.height = window.innerHeight;
     };
     resize();
-    window.addEventListener('resize', resize);
+    window.addEventListener("resize", resize);
 
     const GRID = 100; // grid line spacing (200px cells, lines at 25%/75% = every 100px)
     const SPEED = 2;
@@ -45,17 +45,23 @@ export default function Home() {
     const blue: Dot = {
       x: snap(canvas.width * 0.2),
       y: snap(canvas.height * 0.6),
-      dx: SPEED, dy: 0,
+      dx: SPEED,
+      dy: 0,
       trail: [],
-      r: 59, g: 130, b: 246
+      r: 59,
+      g: 130,
+      b: 246,
     };
 
     const red: Dot = {
       x: snap(canvas.width * 0.8),
       y: snap(canvas.height * 0.85),
-      dx: -SPEED, dy: 0,
+      dx: -SPEED,
+      dy: 0,
       trail: [],
-      r: 239, g: 68, b: 68
+      r: 239,
+      g: 68,
+      b: 68,
     };
 
     let lastTime = performance.now();
@@ -117,8 +123,14 @@ export default function Home() {
           dot.y = halfH + GRID;
           dot.trail = [];
         }
-        if (dot.x < 0) { dot.x = w; dot.trail = []; }
-        if (dot.x > w) { dot.x = 0; dot.trail = []; }
+        if (dot.x < 0) {
+          dot.x = w;
+          dot.trail = [];
+        }
+        if (dot.x > w) {
+          dot.x = 0;
+          dot.trail = [];
+        }
       };
 
       const drawDot = (dot: Dot) => {
@@ -149,7 +161,7 @@ export default function Home() {
 
     return () => {
       cancelAnimationFrame(frameId);
-      window.removeEventListener('resize', resize);
+      window.removeEventListener("resize", resize);
     };
   }, []);
 
@@ -159,7 +171,9 @@ export default function Home() {
       if (isPlayingRef.current) return;
       isPlayingRef.current = true;
 
-      const AudioContextClass = window.AudioContext || (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AudioContextClass =
+        window.AudioContext ||
+        (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       const audioContext = new AudioContextClass();
       audioContextRef.current = audioContext;
 
@@ -183,7 +197,7 @@ export default function Home() {
           // Bass note
           const bass = audioContext.createOscillator();
           const bassGain = audioContext.createGain();
-          bass.type = 'sine';
+          bass.type = "sine";
           bass.frequency.value = bassNotes[noteIndex];
 
           bassGain.gain.setValueAtTime(0, currentTime);
@@ -199,7 +213,7 @@ export default function Home() {
           if (noteIndex % 2 === 0) {
             const melody = audioContext.createOscillator();
             const melodyGain = audioContext.createGain();
-            melody.type = 'square';
+            melody.type = "square";
             melody.frequency.value = melodyNotes[noteIndex];
 
             melodyGain.gain.setValueAtTime(0, currentTime);
@@ -215,7 +229,7 @@ export default function Home() {
           // Hi-hat/click (every beat)
           const noise = audioContext.createOscillator();
           const noiseGain = audioContext.createGain();
-          noise.type = 'triangle';
+          noise.type = "triangle";
           noise.frequency.value = 8000 + Math.random() * 2000;
 
           noiseGain.gain.setValueAtTime(0, currentTime);
@@ -240,13 +254,13 @@ export default function Home() {
     // Start audio on user interaction to avoid autoplay restrictions
     const handleUserInteraction = () => {
       initAudio();
-      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener("click", handleUserInteraction);
     };
 
-    document.addEventListener('click', handleUserInteraction);
+    document.addEventListener("click", handleUserInteraction);
 
     return () => {
-      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener("click", handleUserInteraction);
       if (audioContextRef.current) {
         audioContextRef.current.close();
       }
@@ -281,11 +295,11 @@ export default function Home() {
             linear-gradient(0deg, transparent 24%, rgba(34, 211, 238, 0.8) 25%, rgba(34, 211, 238, 0.8) 26%, transparent 27%, transparent 74%, rgba(34, 211, 238, 0.8) 75%, rgba(34, 211, 238, 0.8) 76%, transparent 77%, transparent),
             linear-gradient(90deg, transparent 24%, rgba(34, 211, 238, 0.8) 25%, rgba(34, 211, 238, 0.8) 26%, transparent 27%, transparent 74%, rgba(34, 211, 238, 0.8) 75%, rgba(34, 211, 238, 0.8) 76%, transparent 77%, transparent)
           `,
-          backgroundSize: '200px 200px',
-          backgroundPosition: '0 0',
-          animation: 'gridMove 15s linear infinite',
-          transform: 'perspective(800px) rotateX(75deg)',
-          transformOrigin: 'center center'
+          backgroundSize: "200px 200px",
+          backgroundPosition: "0 0",
+          animation: "gridMove 15s linear infinite",
+          transform: "perspective(800px) rotateX(75deg)",
+          transformOrigin: "center center",
         }}
       />
 
@@ -293,29 +307,56 @@ export default function Home() {
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 h-0.5 bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-80 shadow-[0_0_20px_rgba(34,211,238,1)]"
         style={{
-          width: '200%',
-          borderRadius: '50%',
-          transform: 'translateX(-50%) translateY(0px)',
-          clipPath: 'inset(0 25% 0 25%)'
+          width: "200%",
+          borderRadius: "50%",
+          transform: "translateX(-50%) translateY(0px)",
+          clipPath: "inset(0 25% 0 25%)",
         }}
       />
 
       {/* Tokyo-Style City Skyline - Buildings spanning entire width with depth */}
-      <div className="absolute top-1/2 left-0 right-0 h-48 sm:h-72 md:h-96 flex items-end justify-start gap-0 -translate-y-full z-0 scale-[0.5] sm:scale-75 md:scale-100 origin-bottom-left" style={{perspective: '1000px'}}>
+      <div
+        className="absolute top-1/2 left-0 right-0 h-48 sm:h-72 md:h-96 flex items-end justify-start gap-0 -translate-y-full z-0 scale-[0.5] sm:scale-75 md:scale-100 origin-bottom-left"
+        style={{ perspective: "1000px" }}
+      >
         {/* Building 1 - Short */}
         <div className="w-20 h-48 bg-gradient-to-br from-gray-800 via-gray-900 to-black border-r-2 border-cyan-800 relative shadow-[8px_0_20px_rgba(0,0,0,0.9),-2px_0_10px_rgba(6,182,212,0.3)]">
           {/* Neon edge light */}
           <div className="absolute top-0 left-0 w-full h-0.5 bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,1)]"></div>
           <div className="absolute top-0 right-0 w-0.5 h-full bg-gradient-to-b from-cyan-500 to-transparent opacity-60"></div>
           {/* Window lights */}
-          <div className="absolute top-6 left-4 w-2 h-2 bg-orange-400 animate-twinkle shadow-[0_0_8px_rgba(251,146,60,0.8)]" style={{animationDelay: '0s'}}></div>
-          <div className="absolute top-14 left-4 w-2 h-2 bg-yellow-300 animate-twinkle shadow-[0_0_8px_rgba(253,224,71,0.8)]" style={{animationDelay: '0.5s'}}></div>
-          <div className="absolute top-22 left-4 w-2 h-2 bg-orange-400 animate-twinkle shadow-[0_0_8px_rgba(251,146,60,0.8)]" style={{animationDelay: '1s'}}></div>
-          <div className="absolute top-30 left-4 w-2 h-2 bg-yellow-400 animate-twinkle shadow-[0_0_8px_rgba(250,204,21,0.8)]" style={{animationDelay: '1.5s'}}></div>
-          <div className="absolute top-38 left-4 w-2 h-2 bg-orange-300 animate-twinkle shadow-[0_0_8px_rgba(253,186,116,0.8)]" style={{animationDelay: '2s'}}></div>
-          <div className="absolute top-6 right-4 w-2 h-2 bg-yellow-300 animate-twinkle shadow-[0_0_8px_rgba(253,224,71,0.8)]" style={{animationDelay: '0.3s'}}></div>
-          <div className="absolute top-14 right-4 w-2 h-2 bg-orange-400 animate-twinkle shadow-[0_0_8px_rgba(251,146,60,0.8)]" style={{animationDelay: '0.8s'}}></div>
-          <div className="absolute top-22 right-4 w-2 h-2 bg-yellow-400 animate-twinkle shadow-[0_0_8px_rgba(250,204,21,0.8)]" style={{animationDelay: '1.3s'}}></div>
+          <div
+            className="absolute top-6 left-4 w-2 h-2 bg-orange-400 animate-twinkle shadow-[0_0_8px_rgba(251,146,60,0.8)]"
+            style={{ animationDelay: "0s" }}
+          ></div>
+          <div
+            className="absolute top-14 left-4 w-2 h-2 bg-yellow-300 animate-twinkle shadow-[0_0_8px_rgba(253,224,71,0.8)]"
+            style={{ animationDelay: "0.5s" }}
+          ></div>
+          <div
+            className="absolute top-22 left-4 w-2 h-2 bg-orange-400 animate-twinkle shadow-[0_0_8px_rgba(251,146,60,0.8)]"
+            style={{ animationDelay: "1s" }}
+          ></div>
+          <div
+            className="absolute top-30 left-4 w-2 h-2 bg-yellow-400 animate-twinkle shadow-[0_0_8px_rgba(250,204,21,0.8)]"
+            style={{ animationDelay: "1.5s" }}
+          ></div>
+          <div
+            className="absolute top-38 left-4 w-2 h-2 bg-orange-300 animate-twinkle shadow-[0_0_8px_rgba(253,186,116,0.8)]"
+            style={{ animationDelay: "2s" }}
+          ></div>
+          <div
+            className="absolute top-6 right-4 w-2 h-2 bg-yellow-300 animate-twinkle shadow-[0_0_8px_rgba(253,224,71,0.8)]"
+            style={{ animationDelay: "0.3s" }}
+          ></div>
+          <div
+            className="absolute top-14 right-4 w-2 h-2 bg-orange-400 animate-twinkle shadow-[0_0_8px_rgba(251,146,60,0.8)]"
+            style={{ animationDelay: "0.8s" }}
+          ></div>
+          <div
+            className="absolute top-22 right-4 w-2 h-2 bg-yellow-400 animate-twinkle shadow-[0_0_8px_rgba(250,204,21,0.8)]"
+            style={{ animationDelay: "1.3s" }}
+          ></div>
           {/* Neon antenna on top */}
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-1 h-3 bg-cyan-400 shadow-[0_0_15px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-2 h-2 bg-cyan-300 rounded-full shadow-[0_0_20px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -323,21 +364,54 @@ export default function Home() {
 
         {/* Building 2 - Medium */}
         <div className="w-24 h-64 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-8 left-5 w-2 h-2 bg-yellow-400 animate-twinkle shadow-[0_0_8px_rgba(250,204,21,0.8)]" style={{animationDelay: '0.2s'}}></div>
-          <div className="absolute top-18 left-5 w-2 h-2 bg-orange-300 animate-twinkle shadow-[0_0_8px_rgba(253,186,116,0.8)]" style={{animationDelay: '0.7s'}}></div>
-          <div className="absolute top-28 left-5 w-2 h-2 bg-yellow-400 animate-twinkle shadow-[0_0_8px_rgba(250,204,21,0.8)]" style={{animationDelay: '1.2s'}}></div>
-          <div className="absolute top-38 left-5 w-2 h-2 bg-orange-400 animate-twinkle shadow-[0_0_8px_rgba(251,146,60,0.8)]" style={{animationDelay: '1.7s'}}></div>
-          <div className="absolute top-48 left-5 w-2 h-2 bg-yellow-300 animate-twinkle shadow-[0_0_8px_rgba(253,224,71,0.8)]" style={{animationDelay: '2.2s'}}></div>
-          <div className="absolute top-58 left-5 w-2 h-2 bg-orange-400 animate-twinkle shadow-[0_0_8px_rgba(251,146,60,0.8)]" style={{animationDelay: '0.5s'}}></div>
-          <div className="absolute top-8 right-5 w-2 h-2 bg-orange-400 animate-twinkle shadow-[0_0_8px_rgba(251,146,60,0.8)]" style={{animationDelay: '0.4s'}}></div>
-          <div className="absolute top-18 right-5 w-2 h-2 bg-yellow-400 animate-twinkle shadow-[0_0_8px_rgba(250,204,21,0.8)]" style={{animationDelay: '0.9s'}}></div>
-          <div className="absolute top-28 right-5 w-2 h-2 bg-orange-300 animate-twinkle shadow-[0_0_8px_rgba(253,186,116,0.8)]" style={{animationDelay: '1.4s'}}></div>
-          <div className="absolute top-38 right-5 w-2 h-2 bg-yellow-400 animate-twinkle shadow-[0_0_8px_rgba(250,204,21,0.8)]" style={{animationDelay: '1.9s'}}></div>
+          <div
+            className="absolute top-8 left-5 w-2 h-2 bg-yellow-400 animate-twinkle shadow-[0_0_8px_rgba(250,204,21,0.8)]"
+            style={{ animationDelay: "0.2s" }}
+          ></div>
+          <div
+            className="absolute top-18 left-5 w-2 h-2 bg-orange-300 animate-twinkle shadow-[0_0_8px_rgba(253,186,116,0.8)]"
+            style={{ animationDelay: "0.7s" }}
+          ></div>
+          <div
+            className="absolute top-28 left-5 w-2 h-2 bg-yellow-400 animate-twinkle shadow-[0_0_8px_rgba(250,204,21,0.8)]"
+            style={{ animationDelay: "1.2s" }}
+          ></div>
+          <div
+            className="absolute top-38 left-5 w-2 h-2 bg-orange-400 animate-twinkle shadow-[0_0_8px_rgba(251,146,60,0.8)]"
+            style={{ animationDelay: "1.7s" }}
+          ></div>
+          <div
+            className="absolute top-48 left-5 w-2 h-2 bg-yellow-300 animate-twinkle shadow-[0_0_8px_rgba(253,224,71,0.8)]"
+            style={{ animationDelay: "2.2s" }}
+          ></div>
+          <div
+            className="absolute top-58 left-5 w-2 h-2 bg-orange-400 animate-twinkle shadow-[0_0_8px_rgba(251,146,60,0.8)]"
+            style={{ animationDelay: "0.5s" }}
+          ></div>
+          <div
+            className="absolute top-8 right-5 w-2 h-2 bg-orange-400 animate-twinkle shadow-[0_0_8px_rgba(251,146,60,0.8)]"
+            style={{ animationDelay: "0.4s" }}
+          ></div>
+          <div
+            className="absolute top-18 right-5 w-2 h-2 bg-yellow-400 animate-twinkle shadow-[0_0_8px_rgba(250,204,21,0.8)]"
+            style={{ animationDelay: "0.9s" }}
+          ></div>
+          <div
+            className="absolute top-28 right-5 w-2 h-2 bg-orange-300 animate-twinkle shadow-[0_0_8px_rgba(253,186,116,0.8)]"
+            style={{ animationDelay: "1.4s" }}
+          ></div>
+          <div
+            className="absolute top-38 right-5 w-2 h-2 bg-yellow-400 animate-twinkle shadow-[0_0_8px_rgba(250,204,21,0.8)]"
+            style={{ animationDelay: "1.9s" }}
+          ></div>
           {/* Antenna */}
           <div className="absolute -top-4 left-1/3 w-0.5 h-4 bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-5 left-1/3 w-1.5 h-1.5 bg-cyan-300 rounded-full shadow-[0_0_15px_rgba(34,211,238,1)] animate-pulse"></div>
           <div className="absolute -top-4 right-1/3 w-0.5 h-4 bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,1)]"></div>
-          <div className="absolute -top-5 right-1/3 w-1.5 h-1.5 bg-cyan-300 rounded-full shadow-[0_0_15px_rgba(34,211,238,1)] animate-pulse" style={{animationDelay: '0.5s'}}></div>
+          <div
+            className="absolute -top-5 right-1/3 w-1.5 h-1.5 bg-cyan-300 rounded-full shadow-[0_0_15px_rgba(34,211,238,1)] animate-pulse"
+            style={{ animationDelay: "0.5s" }}
+          ></div>
         </div>
 
         {/* Building 3 - SUPER TALL (Tokyo Skytree-like) with MAXIMUM DEPTH */}
@@ -350,35 +424,101 @@ export default function Home() {
           {/* Right edge glow */}
           <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-cyan-400 to-transparent opacity-80"></div>
           {/* Window lights with enhanced glow */}
-          <div className="absolute top-10 left-6 w-3 h-3 bg-orange-400 animate-twinkle shadow-[0_0_12px_rgba(251,146,60,1)]" style={{animationDelay: '0.1s'}}></div>
-          <div className="absolute top-22 left-6 w-3 h-3 bg-yellow-400 animate-twinkle shadow-[0_0_12px_rgba(250,204,21,1)]" style={{animationDelay: '0.6s'}}></div>
-          <div className="absolute top-34 left-6 w-3 h-3 bg-orange-300 animate-twinkle shadow-[0_0_12px_rgba(253,186,116,1)]" style={{animationDelay: '1.1s'}}></div>
-          <div className="absolute top-46 left-6 w-3 h-3 bg-yellow-300 animate-twinkle shadow-[0_0_12px_rgba(253,224,71,1)]" style={{animationDelay: '1.6s'}}></div>
-          <div className="absolute top-58 left-6 w-3 h-3 bg-orange-400 animate-twinkle shadow-[0_0_12px_rgba(251,146,60,1)]" style={{animationDelay: '2.1s'}}></div>
-          <div className="absolute top-70 left-6 w-3 h-3 bg-yellow-400 animate-twinkle shadow-[0_0_12px_rgba(250,204,21,1)]" style={{animationDelay: '0.8s'}}></div>
-          <div className="absolute top-82 left-6 w-3 h-3 bg-orange-400 animate-twinkle shadow-[0_0_12px_rgba(251,146,60,1)]" style={{animationDelay: '1.3s'}}></div>
-          <div className="absolute top-10 right-6 w-3 h-3 bg-yellow-400 animate-twinkle shadow-[0_0_12px_rgba(250,204,21,1)]" style={{animationDelay: '0.3s'}}></div>
-          <div className="absolute top-22 right-6 w-3 h-3 bg-orange-400 animate-twinkle shadow-[0_0_12px_rgba(251,146,60,1)]" style={{animationDelay: '0.8s'}}></div>
-          <div className="absolute top-34 right-6 w-3 h-3 bg-yellow-300 animate-twinkle shadow-[0_0_12px_rgba(253,224,71,1)]" style={{animationDelay: '1.3s'}}></div>
-          <div className="absolute top-46 right-6 w-3 h-3 bg-orange-400 animate-twinkle shadow-[0_0_12px_rgba(251,146,60,1)]" style={{animationDelay: '1.8s'}}></div>
-          <div className="absolute top-58 right-6 w-3 h-3 bg-yellow-400 animate-twinkle shadow-[0_0_12px_rgba(250,204,21,1)]" style={{animationDelay: '2.3s'}}></div>
-          <div className="absolute top-70 right-6 w-3 h-3 bg-orange-300 animate-twinkle shadow-[0_0_12px_rgba(253,186,116,1)]" style={{animationDelay: '0.6s'}}></div>
+          <div
+            className="absolute top-10 left-6 w-3 h-3 bg-orange-400 animate-twinkle shadow-[0_0_12px_rgba(251,146,60,1)]"
+            style={{ animationDelay: "0.1s" }}
+          ></div>
+          <div
+            className="absolute top-22 left-6 w-3 h-3 bg-yellow-400 animate-twinkle shadow-[0_0_12px_rgba(250,204,21,1)]"
+            style={{ animationDelay: "0.6s" }}
+          ></div>
+          <div
+            className="absolute top-34 left-6 w-3 h-3 bg-orange-300 animate-twinkle shadow-[0_0_12px_rgba(253,186,116,1)]"
+            style={{ animationDelay: "1.1s" }}
+          ></div>
+          <div
+            className="absolute top-46 left-6 w-3 h-3 bg-yellow-300 animate-twinkle shadow-[0_0_12px_rgba(253,224,71,1)]"
+            style={{ animationDelay: "1.6s" }}
+          ></div>
+          <div
+            className="absolute top-58 left-6 w-3 h-3 bg-orange-400 animate-twinkle shadow-[0_0_12px_rgba(251,146,60,1)]"
+            style={{ animationDelay: "2.1s" }}
+          ></div>
+          <div
+            className="absolute top-70 left-6 w-3 h-3 bg-yellow-400 animate-twinkle shadow-[0_0_12px_rgba(250,204,21,1)]"
+            style={{ animationDelay: "0.8s" }}
+          ></div>
+          <div
+            className="absolute top-82 left-6 w-3 h-3 bg-orange-400 animate-twinkle shadow-[0_0_12px_rgba(251,146,60,1)]"
+            style={{ animationDelay: "1.3s" }}
+          ></div>
+          <div
+            className="absolute top-10 right-6 w-3 h-3 bg-yellow-400 animate-twinkle shadow-[0_0_12px_rgba(250,204,21,1)]"
+            style={{ animationDelay: "0.3s" }}
+          ></div>
+          <div
+            className="absolute top-22 right-6 w-3 h-3 bg-orange-400 animate-twinkle shadow-[0_0_12px_rgba(251,146,60,1)]"
+            style={{ animationDelay: "0.8s" }}
+          ></div>
+          <div
+            className="absolute top-34 right-6 w-3 h-3 bg-yellow-300 animate-twinkle shadow-[0_0_12px_rgba(253,224,71,1)]"
+            style={{ animationDelay: "1.3s" }}
+          ></div>
+          <div
+            className="absolute top-46 right-6 w-3 h-3 bg-orange-400 animate-twinkle shadow-[0_0_12px_rgba(251,146,60,1)]"
+            style={{ animationDelay: "1.8s" }}
+          ></div>
+          <div
+            className="absolute top-58 right-6 w-3 h-3 bg-yellow-400 animate-twinkle shadow-[0_0_12px_rgba(250,204,21,1)]"
+            style={{ animationDelay: "2.3s" }}
+          ></div>
+          <div
+            className="absolute top-70 right-6 w-3 h-3 bg-orange-300 animate-twinkle shadow-[0_0_12px_rgba(253,186,116,1)]"
+            style={{ animationDelay: "0.6s" }}
+          ></div>
           {/* Tall antenna with pulsing lights */}
           <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-1 h-8 bg-gradient-to-t from-cyan-600 to-cyan-400 shadow-[0_0_20px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-3 h-3 bg-cyan-300 rounded-full shadow-[0_0_30px_rgba(34,211,238,1)] animate-pulse"></div>
-          <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-2 h-2 bg-cyan-400 rounded-full shadow-[0_0_20px_rgba(34,211,238,1)] animate-pulse" style={{animationDelay: '0.5s'}}></div>
+          <div
+            className="absolute -top-5 left-1/2 -translate-x-1/2 w-2 h-2 bg-cyan-400 rounded-full shadow-[0_0_20px_rgba(34,211,238,1)] animate-pulse"
+            style={{ animationDelay: "0.5s" }}
+          ></div>
         </div>
 
         {/* Building 4 - Medium */}
         <div className="w-22 h-56 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-8 left-4 w-2 h-2 bg-yellow-300 animate-twinkle" style={{animationDelay: '0.4s'}}></div>
-          <div className="absolute top-18 left-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '0.9s'}}></div>
-          <div className="absolute top-28 left-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '1.4s'}}></div>
-          <div className="absolute top-38 left-4 w-2 h-2 bg-orange-300 animate-twinkle" style={{animationDelay: '1.9s'}}></div>
-          <div className="absolute top-48 left-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '0.2s'}}></div>
-          <div className="absolute top-8 right-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '0.1s'}}></div>
-          <div className="absolute top-18 right-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '0.6s'}}></div>
-          <div className="absolute top-28 right-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '1.1s'}}></div>
+          <div
+            className="absolute top-8 left-4 w-2 h-2 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "0.4s" }}
+          ></div>
+          <div
+            className="absolute top-18 left-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "0.9s" }}
+          ></div>
+          <div
+            className="absolute top-28 left-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1.4s" }}
+          ></div>
+          <div
+            className="absolute top-38 left-4 w-2 h-2 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "1.9s" }}
+          ></div>
+          <div
+            className="absolute top-48 left-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "0.2s" }}
+          ></div>
+          <div
+            className="absolute top-8 right-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "0.1s" }}
+          ></div>
+          <div
+            className="absolute top-18 right-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "0.6s" }}
+          ></div>
+          <div
+            className="absolute top-28 right-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.1s" }}
+          ></div>
           {/* Antenna */}
           <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-0.5 h-4 bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-cyan-300 rounded-full shadow-[0_0_15px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -386,15 +526,42 @@ export default function Home() {
 
         {/* Building 5 - Tall */}
         <div className="w-28 h-72 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-10 left-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle shadow-[0_0_10px_rgba(251,146,60,0.8)]" style={{animationDelay: '0.5s'}}></div>
-          <div className="absolute top-22 left-5 w-2.5 h-2.5 bg-yellow-300 animate-twinkle shadow-[0_0_10px_rgba(253,224,71,0.8)]" style={{animationDelay: '1s'}}></div>
-          <div className="absolute top-34 left-5 w-2.5 h-2.5 bg-orange-300 animate-twinkle shadow-[0_0_10px_rgba(253,186,116,0.8)]" style={{animationDelay: '1.5s'}}></div>
-          <div className="absolute top-46 left-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle shadow-[0_0_10px_rgba(250,204,21,0.8)]" style={{animationDelay: '2s'}}></div>
-          <div className="absolute top-58 left-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle shadow-[0_0_10px_rgba(251,146,60,0.8)]" style={{animationDelay: '0.2s'}}></div>
-          <div className="absolute top-10 right-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle shadow-[0_0_10px_rgba(250,204,21,0.8)]" style={{animationDelay: '0.7s'}}></div>
-          <div className="absolute top-22 right-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle shadow-[0_0_10px_rgba(251,146,60,0.8)]" style={{animationDelay: '1.2s'}}></div>
-          <div className="absolute top-34 right-5 w-2.5 h-2.5 bg-yellow-300 animate-twinkle shadow-[0_0_10px_rgba(253,224,71,0.8)]" style={{animationDelay: '1.7s'}}></div>
-          <div className="absolute top-46 right-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle shadow-[0_0_10px_rgba(251,146,60,0.8)]" style={{animationDelay: '2.2s'}}></div>
+          <div
+            className="absolute top-10 left-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle shadow-[0_0_10px_rgba(251,146,60,0.8)]"
+            style={{ animationDelay: "0.5s" }}
+          ></div>
+          <div
+            className="absolute top-22 left-5 w-2.5 h-2.5 bg-yellow-300 animate-twinkle shadow-[0_0_10px_rgba(253,224,71,0.8)]"
+            style={{ animationDelay: "1s" }}
+          ></div>
+          <div
+            className="absolute top-34 left-5 w-2.5 h-2.5 bg-orange-300 animate-twinkle shadow-[0_0_10px_rgba(253,186,116,0.8)]"
+            style={{ animationDelay: "1.5s" }}
+          ></div>
+          <div
+            className="absolute top-46 left-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle shadow-[0_0_10px_rgba(250,204,21,0.8)]"
+            style={{ animationDelay: "2s" }}
+          ></div>
+          <div
+            className="absolute top-58 left-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle shadow-[0_0_10px_rgba(251,146,60,0.8)]"
+            style={{ animationDelay: "0.2s" }}
+          ></div>
+          <div
+            className="absolute top-10 right-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle shadow-[0_0_10px_rgba(250,204,21,0.8)]"
+            style={{ animationDelay: "0.7s" }}
+          ></div>
+          <div
+            className="absolute top-22 right-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle shadow-[0_0_10px_rgba(251,146,60,0.8)]"
+            style={{ animationDelay: "1.2s" }}
+          ></div>
+          <div
+            className="absolute top-34 right-5 w-2.5 h-2.5 bg-yellow-300 animate-twinkle shadow-[0_0_10px_rgba(253,224,71,0.8)]"
+            style={{ animationDelay: "1.7s" }}
+          ></div>
+          <div
+            className="absolute top-46 right-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle shadow-[0_0_10px_rgba(251,146,60,0.8)]"
+            style={{ animationDelay: "2.2s" }}
+          ></div>
           {/* Tall antenna */}
           <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-0.5 h-6 bg-gradient-to-t from-cyan-600 to-cyan-400 shadow-[0_0_15px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-2 h-2 bg-cyan-300 rounded-full shadow-[0_0_25px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -402,12 +569,30 @@ export default function Home() {
 
         {/* Building 6 - Short */}
         <div className="w-18 h-44 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-6 left-3 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '0.3s'}}></div>
-          <div className="absolute top-14 left-3 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '0.8s'}}></div>
-          <div className="absolute top-22 left-3 w-2 h-2 bg-yellow-300 animate-twinkle" style={{animationDelay: '1.3s'}}></div>
-          <div className="absolute top-30 left-3 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '1.8s'}}></div>
-          <div className="absolute top-38 left-3 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '0.4s'}}></div>
-          <div className="absolute top-6 right-3 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '0.5s'}}></div>
+          <div
+            className="absolute top-6 left-3 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "0.3s" }}
+          ></div>
+          <div
+            className="absolute top-14 left-3 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "0.8s" }}
+          ></div>
+          <div
+            className="absolute top-22 left-3 w-2 h-2 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "1.3s" }}
+          ></div>
+          <div
+            className="absolute top-30 left-3 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.8s" }}
+          ></div>
+          <div
+            className="absolute top-38 left-3 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "0.4s" }}
+          ></div>
+          <div
+            className="absolute top-6 right-3 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "0.5s" }}
+          ></div>
           {/* Small antenna */}
           <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-0.5 h-2 bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-1 h-1 bg-cyan-300 rounded-full shadow-[0_0_12px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -415,15 +600,42 @@ export default function Home() {
 
         {/* Building 7 - Medium-Tall */}
         <div className="w-24 h-68 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-10 left-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '0.6s'}}></div>
-          <div className="absolute top-20 left-4 w-2 h-2 bg-yellow-300 animate-twinkle" style={{animationDelay: '1.1s'}}></div>
-          <div className="absolute top-30 left-4 w-2 h-2 bg-orange-300 animate-twinkle" style={{animationDelay: '1.6s'}}></div>
-          <div className="absolute top-40 left-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '2.1s'}}></div>
-          <div className="absolute top-50 left-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '0.4s'}}></div>
-          <div className="absolute top-60 left-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '0.9s'}}></div>
-          <div className="absolute top-10 right-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '0.9s'}}></div>
-          <div className="absolute top-20 right-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '1.4s'}}></div>
-          <div className="absolute top-30 right-4 w-2 h-2 bg-yellow-300 animate-twinkle" style={{animationDelay: '1.9s'}}></div>
+          <div
+            className="absolute top-10 left-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "0.6s" }}
+          ></div>
+          <div
+            className="absolute top-20 left-4 w-2 h-2 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "1.1s" }}
+          ></div>
+          <div
+            className="absolute top-30 left-4 w-2 h-2 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "1.6s" }}
+          ></div>
+          <div
+            className="absolute top-40 left-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "2.1s" }}
+          ></div>
+          <div
+            className="absolute top-50 left-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "0.4s" }}
+          ></div>
+          <div
+            className="absolute top-60 left-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "0.9s" }}
+          ></div>
+          <div
+            className="absolute top-10 right-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "0.9s" }}
+          ></div>
+          <div
+            className="absolute top-20 right-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.4s" }}
+          ></div>
+          <div
+            className="absolute top-30 right-4 w-2 h-2 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "1.9s" }}
+          ></div>
           {/* Medium antenna */}
           <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-0.5 h-5 bg-gradient-to-t from-cyan-600 to-cyan-400 shadow-[0_0_15px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-2 h-2 bg-cyan-300 rounded-full shadow-[0_0_20px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -431,12 +643,30 @@ export default function Home() {
 
         {/* Building 8 - Short */}
         <div className="w-20 h-52 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-8 left-4 w-2 h-2 bg-yellow-300 animate-twinkle shadow-[0_0_8px_rgba(253,224,71,0.8)]" style={{animationDelay: '0.7s'}}></div>
-          <div className="absolute top-18 left-4 w-2 h-2 bg-orange-400 animate-twinkle shadow-[0_0_8px_rgba(251,146,60,0.8)]" style={{animationDelay: '1.2s'}}></div>
-          <div className="absolute top-28 left-4 w-2 h-2 bg-yellow-400 animate-twinkle shadow-[0_0_8px_rgba(250,204,21,0.8)]" style={{animationDelay: '1.7s'}}></div>
-          <div className="absolute top-38 left-4 w-2 h-2 bg-orange-300 animate-twinkle shadow-[0_0_8px_rgba(253,186,116,0.8)]" style={{animationDelay: '2.2s'}}></div>
-          <div className="absolute top-8 right-4 w-2 h-2 bg-orange-400 animate-twinkle shadow-[0_0_8px_rgba(251,146,60,0.8)]" style={{animationDelay: '0.2s'}}></div>
-          <div className="absolute top-18 right-4 w-2 h-2 bg-yellow-400 animate-twinkle shadow-[0_0_8px_rgba(250,204,21,0.8)]" style={{animationDelay: '0.7s'}}></div>
+          <div
+            className="absolute top-8 left-4 w-2 h-2 bg-yellow-300 animate-twinkle shadow-[0_0_8px_rgba(253,224,71,0.8)]"
+            style={{ animationDelay: "0.7s" }}
+          ></div>
+          <div
+            className="absolute top-18 left-4 w-2 h-2 bg-orange-400 animate-twinkle shadow-[0_0_8px_rgba(251,146,60,0.8)]"
+            style={{ animationDelay: "1.2s" }}
+          ></div>
+          <div
+            className="absolute top-28 left-4 w-2 h-2 bg-yellow-400 animate-twinkle shadow-[0_0_8px_rgba(250,204,21,0.8)]"
+            style={{ animationDelay: "1.7s" }}
+          ></div>
+          <div
+            className="absolute top-38 left-4 w-2 h-2 bg-orange-300 animate-twinkle shadow-[0_0_8px_rgba(253,186,116,0.8)]"
+            style={{ animationDelay: "2.2s" }}
+          ></div>
+          <div
+            className="absolute top-8 right-4 w-2 h-2 bg-orange-400 animate-twinkle shadow-[0_0_8px_rgba(251,146,60,0.8)]"
+            style={{ animationDelay: "0.2s" }}
+          ></div>
+          <div
+            className="absolute top-18 right-4 w-2 h-2 bg-yellow-400 animate-twinkle shadow-[0_0_8px_rgba(250,204,21,0.8)]"
+            style={{ animationDelay: "0.7s" }}
+          ></div>
           {/* Antenna */}
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-0.5 h-3 bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-cyan-300 rounded-full shadow-[0_0_15px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -444,12 +674,30 @@ export default function Home() {
 
         {/* Building 9 - Medium */}
         <div className="w-24 h-60 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-10 left-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '0.8s'}}></div>
-          <div className="absolute top-22 left-4 w-2 h-2 bg-yellow-300 animate-twinkle" style={{animationDelay: '1.3s'}}></div>
-          <div className="absolute top-34 left-4 w-2 h-2 bg-orange-300 animate-twinkle" style={{animationDelay: '1.8s'}}></div>
-          <div className="absolute top-46 left-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '0.3s'}}></div>
-          <div className="absolute top-10 right-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '1s'}}></div>
-          <div className="absolute top-22 right-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '1.5s'}}></div>
+          <div
+            className="absolute top-10 left-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "0.8s" }}
+          ></div>
+          <div
+            className="absolute top-22 left-4 w-2 h-2 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "1.3s" }}
+          ></div>
+          <div
+            className="absolute top-34 left-4 w-2 h-2 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "1.8s" }}
+          ></div>
+          <div
+            className="absolute top-46 left-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "0.3s" }}
+          ></div>
+          <div
+            className="absolute top-10 right-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1s" }}
+          ></div>
+          <div
+            className="absolute top-22 right-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.5s" }}
+          ></div>
           {/* Antenna */}
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-0.5 h-3 bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-cyan-300 rounded-full shadow-[0_0_15px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -457,13 +705,34 @@ export default function Home() {
 
         {/* Building 10 - Tall */}
         <div className="w-26 h-76 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-12 left-5 w-2.5 h-2.5 bg-yellow-300 animate-twinkle" style={{animationDelay: '0.9s'}}></div>
-          <div className="absolute top-26 left-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle" style={{animationDelay: '1.4s'}}></div>
-          <div className="absolute top-40 left-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle" style={{animationDelay: '1.9s'}}></div>
-          <div className="absolute top-54 left-5 w-2.5 h-2.5 bg-orange-300 animate-twinkle" style={{animationDelay: '0.4s'}}></div>
-          <div className="absolute top-68 left-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle" style={{animationDelay: '0.9s'}}></div>
-          <div className="absolute top-12 right-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle" style={{animationDelay: '1.1s'}}></div>
-          <div className="absolute top-26 right-5 w-2.5 h-2.5 bg-yellow-300 animate-twinkle" style={{animationDelay: '1.6s'}}></div>
+          <div
+            className="absolute top-12 left-5 w-2.5 h-2.5 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "0.9s" }}
+          ></div>
+          <div
+            className="absolute top-26 left-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.4s" }}
+          ></div>
+          <div
+            className="absolute top-40 left-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1.9s" }}
+          ></div>
+          <div
+            className="absolute top-54 left-5 w-2.5 h-2.5 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "0.4s" }}
+          ></div>
+          <div
+            className="absolute top-68 left-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "0.9s" }}
+          ></div>
+          <div
+            className="absolute top-12 right-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.1s" }}
+          ></div>
+          <div
+            className="absolute top-26 right-5 w-2.5 h-2.5 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "1.6s" }}
+          ></div>
           {/* Tall antenna */}
           <div className="absolute -top-7 left-1/2 -translate-x-1/2 w-1 h-7 bg-gradient-to-t from-cyan-600 to-cyan-400 shadow-[0_0_18px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-9 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-cyan-300 rounded-full shadow-[0_0_25px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -471,11 +740,26 @@ export default function Home() {
 
         {/* Building 11 - Short */}
         <div className="w-18 h-46 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-8 left-3 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '1s'}}></div>
-          <div className="absolute top-18 left-3 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '1.5s'}}></div>
-          <div className="absolute top-28 left-3 w-2 h-2 bg-yellow-300 animate-twinkle" style={{animationDelay: '2s'}}></div>
-          <div className="absolute top-38 left-3 w-2 h-2 bg-orange-300 animate-twinkle" style={{animationDelay: '0.5s'}}></div>
-          <div className="absolute top-8 right-3 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '1.2s'}}></div>
+          <div
+            className="absolute top-8 left-3 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1s" }}
+          ></div>
+          <div
+            className="absolute top-18 left-3 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.5s" }}
+          ></div>
+          <div
+            className="absolute top-28 left-3 w-2 h-2 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "2s" }}
+          ></div>
+          <div
+            className="absolute top-38 left-3 w-2 h-2 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "0.5s" }}
+          ></div>
+          <div
+            className="absolute top-8 right-3 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.2s" }}
+          ></div>
           {/* Small antenna */}
           <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-0.5 h-2 bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-1 h-1 bg-cyan-300 rounded-full shadow-[0_0_12px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -483,14 +767,38 @@ export default function Home() {
 
         {/* Building 12 - Very Tall */}
         <div className="w-30 h-88 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-12 left-6 w-2.5 h-2.5 bg-orange-400 animate-twinkle" style={{animationDelay: '1.1s'}}></div>
-          <div className="absolute top-26 left-6 w-2.5 h-2.5 bg-yellow-400 animate-twinkle" style={{animationDelay: '1.6s'}}></div>
-          <div className="absolute top-40 left-6 w-2.5 h-2.5 bg-orange-300 animate-twinkle" style={{animationDelay: '2.1s'}}></div>
-          <div className="absolute top-54 left-6 w-2.5 h-2.5 bg-yellow-300 animate-twinkle" style={{animationDelay: '0.6s'}}></div>
-          <div className="absolute top-68 left-6 w-2.5 h-2.5 bg-orange-400 animate-twinkle" style={{animationDelay: '1.1s'}}></div>
-          <div className="absolute top-82 left-6 w-2.5 h-2.5 bg-yellow-400 animate-twinkle" style={{animationDelay: '1.6s'}}></div>
-          <div className="absolute top-12 right-6 w-2.5 h-2.5 bg-yellow-400 animate-twinkle" style={{animationDelay: '1.3s'}}></div>
-          <div className="absolute top-26 right-6 w-2.5 h-2.5 bg-orange-400 animate-twinkle" style={{animationDelay: '1.8s'}}></div>
+          <div
+            className="absolute top-12 left-6 w-2.5 h-2.5 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.1s" }}
+          ></div>
+          <div
+            className="absolute top-26 left-6 w-2.5 h-2.5 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1.6s" }}
+          ></div>
+          <div
+            className="absolute top-40 left-6 w-2.5 h-2.5 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "2.1s" }}
+          ></div>
+          <div
+            className="absolute top-54 left-6 w-2.5 h-2.5 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "0.6s" }}
+          ></div>
+          <div
+            className="absolute top-68 left-6 w-2.5 h-2.5 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.1s" }}
+          ></div>
+          <div
+            className="absolute top-82 left-6 w-2.5 h-2.5 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1.6s" }}
+          ></div>
+          <div
+            className="absolute top-12 right-6 w-2.5 h-2.5 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1.3s" }}
+          ></div>
+          <div
+            className="absolute top-26 right-6 w-2.5 h-2.5 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.8s" }}
+          ></div>
           {/* Very tall antenna */}
           <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-1 h-8 bg-gradient-to-t from-cyan-600 to-cyan-400 shadow-[0_0_20px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-3 h-3 bg-cyan-300 rounded-full shadow-[0_0_30px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -498,11 +806,26 @@ export default function Home() {
 
         {/* Building 13 - Medium */}
         <div className="w-22 h-58 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-10 left-4 w-2 h-2 bg-yellow-300 animate-twinkle" style={{animationDelay: '1.2s'}}></div>
-          <div className="absolute top-22 left-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '1.7s'}}></div>
-          <div className="absolute top-34 left-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '2.2s'}}></div>
-          <div className="absolute top-46 left-4 w-2 h-2 bg-orange-300 animate-twinkle" style={{animationDelay: '0.7s'}}></div>
-          <div className="absolute top-10 right-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '1.4s'}}></div>
+          <div
+            className="absolute top-10 left-4 w-2 h-2 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "1.2s" }}
+          ></div>
+          <div
+            className="absolute top-22 left-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.7s" }}
+          ></div>
+          <div
+            className="absolute top-34 left-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "2.2s" }}
+          ></div>
+          <div
+            className="absolute top-46 left-4 w-2 h-2 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "0.7s" }}
+          ></div>
+          <div
+            className="absolute top-10 right-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.4s" }}
+          ></div>
           {/* Antenna */}
           <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-0.5 h-4 bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-cyan-300 rounded-full shadow-[0_0_15px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -510,11 +833,26 @@ export default function Home() {
 
         {/* Building 14 - Short */}
         <div className="w-20 h-50 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-8 left-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '1.3s'}}></div>
-          <div className="absolute top-18 left-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '1.8s'}}></div>
-          <div className="absolute top-28 left-4 w-2 h-2 bg-orange-300 animate-twinkle" style={{animationDelay: '0.8s'}}></div>
-          <div className="absolute top-38 left-4 w-2 h-2 bg-yellow-300 animate-twinkle" style={{animationDelay: '1.3s'}}></div>
-          <div className="absolute top-8 right-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '1.5s'}}></div>
+          <div
+            className="absolute top-8 left-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.3s" }}
+          ></div>
+          <div
+            className="absolute top-18 left-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1.8s" }}
+          ></div>
+          <div
+            className="absolute top-28 left-4 w-2 h-2 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "0.8s" }}
+          ></div>
+          <div
+            className="absolute top-38 left-4 w-2 h-2 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "1.3s" }}
+          ></div>
+          <div
+            className="absolute top-8 right-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1.5s" }}
+          ></div>
           {/* Small antenna */}
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-0.5 h-3 bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-cyan-300 rounded-full shadow-[0_0_15px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -522,12 +860,30 @@ export default function Home() {
 
         {/* Building 15 - Tall */}
         <div className="w-26 h-70 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-12 left-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle" style={{animationDelay: '1.4s'}}></div>
-          <div className="absolute top-26 left-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle" style={{animationDelay: '1.9s'}}></div>
-          <div className="absolute top-40 left-5 w-2.5 h-2.5 bg-yellow-300 animate-twinkle" style={{animationDelay: '0.9s'}}></div>
-          <div className="absolute top-54 left-5 w-2.5 h-2.5 bg-orange-300 animate-twinkle" style={{animationDelay: '1.4s'}}></div>
-          <div className="absolute top-12 right-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle" style={{animationDelay: '1.6s'}}></div>
-          <div className="absolute top-26 right-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle" style={{animationDelay: '2.1s'}}></div>
+          <div
+            className="absolute top-12 left-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1.4s" }}
+          ></div>
+          <div
+            className="absolute top-26 left-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.9s" }}
+          ></div>
+          <div
+            className="absolute top-40 left-5 w-2.5 h-2.5 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "0.9s" }}
+          ></div>
+          <div
+            className="absolute top-54 left-5 w-2.5 h-2.5 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "1.4s" }}
+          ></div>
+          <div
+            className="absolute top-12 right-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.6s" }}
+          ></div>
+          <div
+            className="absolute top-26 right-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "2.1s" }}
+          ></div>
           {/* Medium antenna */}
           <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-0.5 h-5 bg-gradient-to-t from-cyan-600 to-cyan-400 shadow-[0_0_15px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-7 left-1/2 -translate-x-1/2 w-2 h-2 bg-cyan-300 rounded-full shadow-[0_0_20px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -535,11 +891,26 @@ export default function Home() {
 
         {/* Building 16 - Medium */}
         <div className="w-24 h-62 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-10 left-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '1.5s'}}></div>
-          <div className="absolute top-22 left-4 w-2 h-2 bg-yellow-300 animate-twinkle" style={{animationDelay: '2s'}}></div>
-          <div className="absolute top-34 left-4 w-2 h-2 bg-orange-300 animate-twinkle" style={{animationDelay: '1s'}}></div>
-          <div className="absolute top-46 left-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '1.5s'}}></div>
-          <div className="absolute top-10 right-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '1.7s'}}></div>
+          <div
+            className="absolute top-10 left-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.5s" }}
+          ></div>
+          <div
+            className="absolute top-22 left-4 w-2 h-2 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "2s" }}
+          ></div>
+          <div
+            className="absolute top-34 left-4 w-2 h-2 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "1s" }}
+          ></div>
+          <div
+            className="absolute top-46 left-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1.5s" }}
+          ></div>
+          <div
+            className="absolute top-10 right-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1.7s" }}
+          ></div>
           {/* Antenna */}
           <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-0.5 h-4 bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-cyan-300 rounded-full shadow-[0_0_15px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -547,11 +918,26 @@ export default function Home() {
 
         {/* Building 17 - Short */}
         <div className="w-22 h-48 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-8 left-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '1.6s'}}></div>
-          <div className="absolute top-18 left-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '2.1s'}}></div>
-          <div className="absolute top-28 left-4 w-2 h-2 bg-yellow-300 animate-twinkle" style={{animationDelay: '1.1s'}}></div>
-          <div className="absolute top-38 left-4 w-2 h-2 bg-orange-300 animate-twinkle" style={{animationDelay: '1.6s'}}></div>
-          <div className="absolute top-8 right-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '1.8s'}}></div>
+          <div
+            className="absolute top-8 left-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1.6s" }}
+          ></div>
+          <div
+            className="absolute top-18 left-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "2.1s" }}
+          ></div>
+          <div
+            className="absolute top-28 left-4 w-2 h-2 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "1.1s" }}
+          ></div>
+          <div
+            className="absolute top-38 left-4 w-2 h-2 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "1.6s" }}
+          ></div>
+          <div
+            className="absolute top-8 right-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1.8s" }}
+          ></div>
           {/* Small antenna */}
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-0.5 h-3 bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-cyan-300 rounded-full shadow-[0_0_15px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -559,13 +945,34 @@ export default function Home() {
 
         {/* Building 18 - Tall */}
         <div className="w-28 h-74 bg-gray-900 border border-cyan-900 relative shadow-[0_0_30px_rgba(0,0,0,0.8)]">
-          <div className="absolute top-10 left-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle" style={{animationDelay: '1.7s'}}></div>
-          <div className="absolute top-24 left-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle" style={{animationDelay: '2.2s'}}></div>
-          <div className="absolute top-38 left-5 w-2.5 h-2.5 bg-orange-300 animate-twinkle" style={{animationDelay: '1.2s'}}></div>
-          <div className="absolute top-52 left-5 w-2.5 h-2.5 bg-yellow-300 animate-twinkle" style={{animationDelay: '1.7s'}}></div>
-          <div className="absolute top-66 left-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle" style={{animationDelay: '2.2s'}}></div>
-          <div className="absolute top-10 right-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle" style={{animationDelay: '1.9s'}}></div>
-          <div className="absolute top-24 right-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle" style={{animationDelay: '0.4s'}}></div>
+          <div
+            className="absolute top-10 left-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.7s" }}
+          ></div>
+          <div
+            className="absolute top-24 left-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "2.2s" }}
+          ></div>
+          <div
+            className="absolute top-38 left-5 w-2.5 h-2.5 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "1.2s" }}
+          ></div>
+          <div
+            className="absolute top-52 left-5 w-2.5 h-2.5 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "1.7s" }}
+          ></div>
+          <div
+            className="absolute top-66 left-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "2.2s" }}
+          ></div>
+          <div
+            className="absolute top-10 right-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1.9s" }}
+          ></div>
+          <div
+            className="absolute top-24 right-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "0.4s" }}
+          ></div>
           {/* Tall antenna */}
           <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-0.5 h-6 bg-gradient-to-t from-cyan-600 to-cyan-400 shadow-[0_0_15px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-2 h-2 bg-cyan-300 rounded-full shadow-[0_0_25px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -573,11 +980,26 @@ export default function Home() {
 
         {/* Building 19 - Medium */}
         <div className="w-24 h-58 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-10 left-4 w-2 h-2 bg-yellow-300 animate-twinkle" style={{animationDelay: '1.8s'}}></div>
-          <div className="absolute top-22 left-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '0.3s'}}></div>
-          <div className="absolute top-34 left-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '1.3s'}}></div>
-          <div className="absolute top-46 left-4 w-2 h-2 bg-orange-300 animate-twinkle" style={{animationDelay: '1.8s'}}></div>
-          <div className="absolute top-10 right-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '2s'}}></div>
+          <div
+            className="absolute top-10 left-4 w-2 h-2 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "1.8s" }}
+          ></div>
+          <div
+            className="absolute top-22 left-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "0.3s" }}
+          ></div>
+          <div
+            className="absolute top-34 left-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1.3s" }}
+          ></div>
+          <div
+            className="absolute top-46 left-4 w-2 h-2 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "1.8s" }}
+          ></div>
+          <div
+            className="absolute top-10 right-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "2s" }}
+          ></div>
           {/* Antenna */}
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-0.5 h-3 bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-cyan-300 rounded-full shadow-[0_0_15px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -585,15 +1007,42 @@ export default function Home() {
 
         {/* Building 20 - Very Tall */}
         <div className="w-32 h-92 bg-gray-900 border-2 border-cyan-900 relative shadow-[0_0_40px_rgba(0,0,0,0.9)]">
-          <div className="absolute top-12 left-6 w-2.5 h-2.5 bg-orange-400 animate-twinkle" style={{animationDelay: '1.9s'}}></div>
-          <div className="absolute top-26 left-6 w-2.5 h-2.5 bg-yellow-400 animate-twinkle" style={{animationDelay: '0.4s'}}></div>
-          <div className="absolute top-40 left-6 w-2.5 h-2.5 bg-orange-300 animate-twinkle" style={{animationDelay: '1.4s'}}></div>
-          <div className="absolute top-54 left-6 w-2.5 h-2.5 bg-yellow-300 animate-twinkle" style={{animationDelay: '1.9s'}}></div>
-          <div className="absolute top-68 left-6 w-2.5 h-2.5 bg-orange-400 animate-twinkle" style={{animationDelay: '0.4s'}}></div>
-          <div className="absolute top-82 left-6 w-2.5 h-2.5 bg-yellow-400 animate-twinkle" style={{animationDelay: '1.4s'}}></div>
-          <div className="absolute top-12 right-6 w-2.5 h-2.5 bg-yellow-400 animate-twinkle" style={{animationDelay: '2.1s'}}></div>
-          <div className="absolute top-26 right-6 w-2.5 h-2.5 bg-orange-400 animate-twinkle" style={{animationDelay: '0.6s'}}></div>
-          <div className="absolute top-40 right-6 w-2.5 h-2.5 bg-yellow-300 animate-twinkle" style={{animationDelay: '1.6s'}}></div>
+          <div
+            className="absolute top-12 left-6 w-2.5 h-2.5 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.9s" }}
+          ></div>
+          <div
+            className="absolute top-26 left-6 w-2.5 h-2.5 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "0.4s" }}
+          ></div>
+          <div
+            className="absolute top-40 left-6 w-2.5 h-2.5 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "1.4s" }}
+          ></div>
+          <div
+            className="absolute top-54 left-6 w-2.5 h-2.5 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "1.9s" }}
+          ></div>
+          <div
+            className="absolute top-68 left-6 w-2.5 h-2.5 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "0.4s" }}
+          ></div>
+          <div
+            className="absolute top-82 left-6 w-2.5 h-2.5 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1.4s" }}
+          ></div>
+          <div
+            className="absolute top-12 right-6 w-2.5 h-2.5 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "2.1s" }}
+          ></div>
+          <div
+            className="absolute top-26 right-6 w-2.5 h-2.5 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "0.6s" }}
+          ></div>
+          <div
+            className="absolute top-40 right-6 w-2.5 h-2.5 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "1.6s" }}
+          ></div>
           {/* Super tall antenna */}
           <div className="absolute -top-9 left-1/2 -translate-x-1/2 w-1 h-9 bg-gradient-to-t from-cyan-700 to-cyan-300 shadow-[0_0_25px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-11 left-1/2 -translate-x-1/2 w-3 h-3 bg-cyan-200 rounded-full shadow-[0_0_35px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -601,11 +1050,26 @@ export default function Home() {
 
         {/* Building 21 - Short */}
         <div className="w-20 h-46 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-6 left-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '2s'}}></div>
-          <div className="absolute top-16 left-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '0.5s'}}></div>
-          <div className="absolute top-26 left-4 w-2 h-2 bg-orange-300 animate-twinkle" style={{animationDelay: '1.5s'}}></div>
-          <div className="absolute top-36 left-4 w-2 h-2 bg-yellow-300 animate-twinkle" style={{animationDelay: '2s'}}></div>
-          <div className="absolute top-6 right-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '0.7s'}}></div>
+          <div
+            className="absolute top-6 left-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "2s" }}
+          ></div>
+          <div
+            className="absolute top-16 left-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "0.5s" }}
+          ></div>
+          <div
+            className="absolute top-26 left-4 w-2 h-2 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "1.5s" }}
+          ></div>
+          <div
+            className="absolute top-36 left-4 w-2 h-2 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "2s" }}
+          ></div>
+          <div
+            className="absolute top-6 right-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "0.7s" }}
+          ></div>
           {/* Small antenna */}
           <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-0.5 h-2 bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-1 h-1 bg-cyan-300 rounded-full shadow-[0_0_12px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -613,11 +1077,26 @@ export default function Home() {
 
         {/* Building 22 - Medium-Tall */}
         <div className="w-26 h-66 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-10 left-5 w-2.5 h-2.5 bg-yellow-300 animate-twinkle" style={{animationDelay: '2.1s'}}></div>
-          <div className="absolute top-24 left-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle" style={{animationDelay: '0.6s'}}></div>
-          <div className="absolute top-38 left-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle" style={{animationDelay: '1.6s'}}></div>
-          <div className="absolute top-52 left-5 w-2.5 h-2.5 bg-orange-300 animate-twinkle" style={{animationDelay: '2.1s'}}></div>
-          <div className="absolute top-10 right-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle" style={{animationDelay: '0.8s'}}></div>
+          <div
+            className="absolute top-10 left-5 w-2.5 h-2.5 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "2.1s" }}
+          ></div>
+          <div
+            className="absolute top-24 left-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "0.6s" }}
+          ></div>
+          <div
+            className="absolute top-38 left-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1.6s" }}
+          ></div>
+          <div
+            className="absolute top-52 left-5 w-2.5 h-2.5 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "2.1s" }}
+          ></div>
+          <div
+            className="absolute top-10 right-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "0.8s" }}
+          ></div>
           {/* Medium antenna */}
           <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-0.5 h-5 bg-gradient-to-t from-cyan-600 to-cyan-400 shadow-[0_0_15px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-2 h-2 bg-cyan-300 rounded-full shadow-[0_0_20px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -625,11 +1104,26 @@ export default function Home() {
 
         {/* Building 23 - Medium */}
         <div className="w-24 h-56 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-10 left-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '2.2s'}}></div>
-          <div className="absolute top-22 left-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '0.7s'}}></div>
-          <div className="absolute top-34 left-4 w-2 h-2 bg-orange-300 animate-twinkle" style={{animationDelay: '1.7s'}}></div>
-          <div className="absolute top-46 left-4 w-2 h-2 bg-yellow-300 animate-twinkle" style={{animationDelay: '2.2s'}}></div>
-          <div className="absolute top-10 right-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '0.9s'}}></div>
+          <div
+            className="absolute top-10 left-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "2.2s" }}
+          ></div>
+          <div
+            className="absolute top-22 left-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "0.7s" }}
+          ></div>
+          <div
+            className="absolute top-34 left-4 w-2 h-2 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "1.7s" }}
+          ></div>
+          <div
+            className="absolute top-46 left-4 w-2 h-2 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "2.2s" }}
+          ></div>
+          <div
+            className="absolute top-10 right-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "0.9s" }}
+          ></div>
           {/* Antenna */}
           <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-0.5 h-4 bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-cyan-300 rounded-full shadow-[0_0_15px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -637,13 +1131,34 @@ export default function Home() {
 
         {/* Building 24 - Tall */}
         <div className="w-28 h-80 bg-gray-900 border border-cyan-900 relative shadow-[0_0_35px_rgba(0,0,0,0.8)]">
-          <div className="absolute top-12 left-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle" style={{animationDelay: '0.1s'}}></div>
-          <div className="absolute top-26 left-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle" style={{animationDelay: '0.8s'}}></div>
-          <div className="absolute top-40 left-5 w-2.5 h-2.5 bg-yellow-300 animate-twinkle" style={{animationDelay: '1.8s'}}></div>
-          <div className="absolute top-54 left-5 w-2.5 h-2.5 bg-orange-300 animate-twinkle" style={{animationDelay: '0.3s'}}></div>
-          <div className="absolute top-68 left-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle" style={{animationDelay: '1s'}}></div>
-          <div className="absolute top-12 right-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle" style={{animationDelay: '1.5s'}}></div>
-          <div className="absolute top-26 right-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle" style={{animationDelay: '2.3s'}}></div>
+          <div
+            className="absolute top-12 left-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "0.1s" }}
+          ></div>
+          <div
+            className="absolute top-26 left-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "0.8s" }}
+          ></div>
+          <div
+            className="absolute top-40 left-5 w-2.5 h-2.5 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "1.8s" }}
+          ></div>
+          <div
+            className="absolute top-54 left-5 w-2.5 h-2.5 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "0.3s" }}
+          ></div>
+          <div
+            className="absolute top-68 left-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1s" }}
+          ></div>
+          <div
+            className="absolute top-12 right-5 w-2.5 h-2.5 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.5s" }}
+          ></div>
+          <div
+            className="absolute top-26 right-5 w-2.5 h-2.5 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "2.3s" }}
+          ></div>
           {/* Tall antenna */}
           <div className="absolute -top-7 left-1/2 -translate-x-1/2 w-1 h-7 bg-gradient-to-t from-cyan-600 to-cyan-400 shadow-[0_0_18px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-9 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-cyan-300 rounded-full shadow-[0_0_25px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -651,11 +1166,26 @@ export default function Home() {
 
         {/* Building 25 - Short */}
         <div className="w-22 h-50 bg-gray-900 border border-cyan-900 relative">
-          <div className="absolute top-8 left-4 w-2 h-2 bg-yellow-300 animate-twinkle" style={{animationDelay: '0.2s'}}></div>
-          <div className="absolute top-18 left-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '1s'}}></div>
-          <div className="absolute top-28 left-4 w-2 h-2 bg-yellow-400 animate-twinkle" style={{animationDelay: '1.9s'}}></div>
-          <div className="absolute top-38 left-4 w-2 h-2 bg-orange-300 animate-twinkle" style={{animationDelay: '0.4s'}}></div>
-          <div className="absolute top-8 right-4 w-2 h-2 bg-orange-400 animate-twinkle" style={{animationDelay: '1.1s'}}></div>
+          <div
+            className="absolute top-8 left-4 w-2 h-2 bg-yellow-300 animate-twinkle"
+            style={{ animationDelay: "0.2s" }}
+          ></div>
+          <div
+            className="absolute top-18 left-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1s" }}
+          ></div>
+          <div
+            className="absolute top-28 left-4 w-2 h-2 bg-yellow-400 animate-twinkle"
+            style={{ animationDelay: "1.9s" }}
+          ></div>
+          <div
+            className="absolute top-38 left-4 w-2 h-2 bg-orange-300 animate-twinkle"
+            style={{ animationDelay: "0.4s" }}
+          ></div>
+          <div
+            className="absolute top-8 right-4 w-2 h-2 bg-orange-400 animate-twinkle"
+            style={{ animationDelay: "1.1s" }}
+          ></div>
           {/* Small antenna */}
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-0.5 h-3 bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,1)]"></div>
           <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-cyan-300 rounded-full shadow-[0_0_15px_rgba(34,211,238,1)] animate-pulse"></div>
@@ -665,55 +1195,103 @@ export default function Home() {
       {/* Shooting Stars - Behind buildings */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         {/* Stars from left and center */}
-        <div className="absolute w-1 h-1 bg-cyan-300 rounded-full shadow-[0_0_10px_rgba(34,211,238,1)] animate-shootingStar1" style={{top: '-5%', left: '20%'}}></div>
-        <div className="absolute w-0.5 h-0.5 bg-cyan-400 rounded-full shadow-[0_0_8px_rgba(34,211,238,1)] animate-shootingStar2" style={{top: '-5%', left: '50%'}}></div>
-        <div className="absolute w-1 h-1 bg-cyan-200 rounded-full shadow-[0_0_10px_rgba(34,211,238,1)] animate-shootingStar3" style={{top: '-5%', left: '35%'}}></div>
-        <div className="absolute w-0.5 h-0.5 bg-cyan-300 rounded-full shadow-[0_0_8px_rgba(34,211,238,1)] animate-shootingStar4" style={{top: '-5%', left: '65%'}}></div>
-        <div className="absolute w-1 h-1 bg-cyan-400 rounded-full shadow-[0_0_10px_rgba(34,211,238,1)] animate-shootingStar5" style={{top: '-5%', left: '10%'}}></div>
-        <div className="absolute w-0.5 h-0.5 bg-cyan-200 rounded-full shadow-[0_0_8px_rgba(34,211,238,1)] animate-shootingStar6" style={{top: '-5%', left: '80%'}}></div>
+        <div
+          className="absolute w-1 h-1 bg-cyan-300 rounded-full shadow-[0_0_10px_rgba(34,211,238,1)] animate-shootingStar1"
+          style={{ top: "-5%", left: "20%" }}
+        ></div>
+        <div
+          className="absolute w-0.5 h-0.5 bg-cyan-400 rounded-full shadow-[0_0_8px_rgba(34,211,238,1)] animate-shootingStar2"
+          style={{ top: "-5%", left: "50%" }}
+        ></div>
+        <div
+          className="absolute w-1 h-1 bg-cyan-200 rounded-full shadow-[0_0_10px_rgba(34,211,238,1)] animate-shootingStar3"
+          style={{ top: "-5%", left: "35%" }}
+        ></div>
+        <div
+          className="absolute w-0.5 h-0.5 bg-cyan-300 rounded-full shadow-[0_0_8px_rgba(34,211,238,1)] animate-shootingStar4"
+          style={{ top: "-5%", left: "65%" }}
+        ></div>
+        <div
+          className="absolute w-1 h-1 bg-cyan-400 rounded-full shadow-[0_0_10px_rgba(34,211,238,1)] animate-shootingStar5"
+          style={{ top: "-5%", left: "10%" }}
+        ></div>
+        <div
+          className="absolute w-0.5 h-0.5 bg-cyan-200 rounded-full shadow-[0_0_8px_rgba(34,211,238,1)] animate-shootingStar6"
+          style={{ top: "-5%", left: "80%" }}
+        ></div>
         {/* Stars from right side */}
-        <div className="absolute w-1 h-1 bg-cyan-300 rounded-full shadow-[0_0_10px_rgba(34,211,238,1)] animate-shootingStar7" style={{top: '-5%', left: '90%'}}></div>
-        <div className="absolute w-0.5 h-0.5 bg-cyan-400 rounded-full shadow-[0_0_8px_rgba(34,211,238,1)] animate-shootingStar8" style={{top: '-5%', left: '95%'}}></div>
-        <div className="absolute w-1 h-1 bg-cyan-200 rounded-full shadow-[0_0_10px_rgba(34,211,238,1)] animate-shootingStar9" style={{top: '-5%', left: '85%'}}></div>
+        <div
+          className="absolute w-1 h-1 bg-cyan-300 rounded-full shadow-[0_0_10px_rgba(34,211,238,1)] animate-shootingStar7"
+          style={{ top: "-5%", left: "90%" }}
+        ></div>
+        <div
+          className="absolute w-0.5 h-0.5 bg-cyan-400 rounded-full shadow-[0_0_8px_rgba(34,211,238,1)] animate-shootingStar8"
+          style={{ top: "-5%", left: "95%" }}
+        ></div>
+        <div
+          className="absolute w-1 h-1 bg-cyan-200 rounded-full shadow-[0_0_10px_rgba(34,211,238,1)] animate-shootingStar9"
+          style={{ top: "-5%", left: "85%" }}
+        ></div>
       </div>
 
       {/* Light Cycles - riding the grid in the bottom half */}
-      <canvas ref={cycleCanvasRef} className="absolute inset-0 pointer-events-none" style={{ zIndex: 5 }} />
+      <canvas
+        ref={cycleCanvasRef}
+        className="absolute inset-0 pointer-events-none"
+        style={{ zIndex: 5 }}
+      />
 
       {/* Content */}
       <div className="text-center space-y-4 sm:space-y-6 md:space-y-8 p-4 sm:p-6 md:p-8 z-20 relative">
         {/* Main heading with ROBOCOP metallic chrome effect + sunburst */}
         <div className="relative inline-block">
           {/* Sunburst rays behind text */}
-          <div className="absolute inset-0 pointer-events-none z-0" style={{
-            background: 'conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(255,255,255,0.15) 10deg, transparent 20deg, transparent 40deg, rgba(255,255,255,0.1) 50deg, transparent 60deg, transparent 80deg, rgba(255,255,255,0.15) 90deg, transparent 100deg, transparent 120deg, rgba(255,255,255,0.08) 130deg, transparent 140deg, transparent 160deg, rgba(255,255,255,0.12) 170deg, transparent 180deg, transparent 200deg, rgba(255,255,255,0.15) 210deg, transparent 220deg, transparent 240deg, rgba(255,255,255,0.1) 250deg, transparent 260deg, transparent 280deg, rgba(255,255,255,0.15) 290deg, transparent 300deg, transparent 320deg, rgba(255,255,255,0.08) 330deg, transparent 340deg, transparent 360deg)',
-            filter: 'blur(2px)',
-            animation: 'sunRotate 20s linear infinite',
-            transform: 'scale(1.5)',
-            opacity: 0.6
-          }}></div>
+          <div
+            className="absolute inset-0 pointer-events-none z-0"
+            style={{
+              background:
+                "conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(255,255,255,0.15) 10deg, transparent 20deg, transparent 40deg, rgba(255,255,255,0.1) 50deg, transparent 60deg, transparent 80deg, rgba(255,255,255,0.15) 90deg, transparent 100deg, transparent 120deg, rgba(255,255,255,0.08) 130deg, transparent 140deg, transparent 160deg, rgba(255,255,255,0.12) 170deg, transparent 180deg, transparent 200deg, rgba(255,255,255,0.15) 210deg, transparent 220deg, transparent 240deg, rgba(255,255,255,0.1) 250deg, transparent 260deg, transparent 280deg, rgba(255,255,255,0.15) 290deg, transparent 300deg, transparent 320deg, rgba(255,255,255,0.08) 330deg, transparent 340deg, transparent 360deg)",
+              filter: "blur(2px)",
+              animation: "sunRotate 20s linear infinite",
+              transform: "scale(1.5)",
+              opacity: 0.6,
+            }}
+          ></div>
           {/* Bright center flash */}
-          <div className="absolute top-1/4 left-1/3 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 pointer-events-none z-5" style={{
-            background: 'radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.2) 20%, transparent 50%)',
-            filter: 'blur(15px)',
-            animation: 'flash 3s ease-in-out infinite'
-          }}></div>
-          <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-widest robocop-metallic relative z-10" style={{
-            fontFamily: 'Impact, "Arial Black", sans-serif',
-            letterSpacing: '0.1em',
-            background: 'linear-gradient(180deg, #ffffff 0%, #d4e8f0 10%, #a8c5d6 25%, #6b9cb5 45%, #3d6b85 65%, #1e3a4f 85%, #0a1820 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            filter: 'drop-shadow(0 0 40px rgba(168,197,214,0.9)) drop-shadow(0 0 20px rgba(107,156,181,1)) drop-shadow(0 6px 12px rgba(0,0,0,1)) drop-shadow(2px 2px 0px rgba(255,255,255,0.3))'
-          }}>
+          <div
+            className="absolute top-1/4 left-1/3 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 pointer-events-none z-5"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.2) 20%, transparent 50%)",
+              filter: "blur(15px)",
+              animation: "flash 3s ease-in-out infinite",
+            }}
+          ></div>
+          <h1
+            className="text-4xl sm:text-6xl md:text-8xl font-black tracking-widest robocop-metallic relative z-10"
+            style={{
+              fontFamily: 'Impact, "Arial Black", sans-serif',
+              letterSpacing: "0.1em",
+              background:
+                "linear-gradient(180deg, #ffffff 0%, #d4e8f0 10%, #a8c5d6 25%, #6b9cb5 45%, #3d6b85 65%, #1e3a4f 85%, #0a1820 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              filter:
+                "drop-shadow(0 0 40px rgba(168,197,214,0.9)) drop-shadow(0 0 20px rgba(107,156,181,1)) drop-shadow(0 6px 12px rgba(0,0,0,1)) drop-shadow(2px 2px 0px rgba(255,255,255,0.3))",
+            }}
+          >
             HELLO WORLD
           </h1>
           {/* Digital scanlines overlay */}
-          <div className="absolute inset-0 pointer-events-none z-20" style={{
-            background: 'repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)',
-            mixBlendMode: 'overlay'
-          }}></div>
+          <div
+            className="absolute inset-0 pointer-events-none z-20"
+            style={{
+              background:
+                "repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)",
+              mixBlendMode: "overlay",
+            }}
+          ></div>
         </div>
 
         {/* Subheading */}
@@ -749,7 +1327,8 @@ export default function Home() {
         }
 
         @keyframes twinkle {
-          0%, 100% {
+          0%,
+          100% {
             opacity: 1;
             transform: scale(1);
           }
@@ -869,37 +1448,55 @@ export default function Home() {
         .animate-shootingStar1 {
           animation: shootingStar1 3s linear infinite;
           animation-delay: 0s;
-          box-shadow: 0 0 10px rgba(34, 211, 238, 1), 30px -30px 20px rgba(34, 211, 238, 0.5), 60px -60px 10px rgba(34, 211, 238, 0.2);
+          box-shadow:
+            0 0 10px rgba(34, 211, 238, 1),
+            30px -30px 20px rgba(34, 211, 238, 0.5),
+            60px -60px 10px rgba(34, 211, 238, 0.2);
         }
 
         .animate-shootingStar2 {
           animation: shootingStar2 2.5s linear infinite;
           animation-delay: 1.5s;
-          box-shadow: 0 0 8px rgba(34, 211, 238, 1), 20px -20px 15px rgba(34, 211, 238, 0.5), 40px -40px 8px rgba(34, 211, 238, 0.2);
+          box-shadow:
+            0 0 8px rgba(34, 211, 238, 1),
+            20px -20px 15px rgba(34, 211, 238, 0.5),
+            40px -40px 8px rgba(34, 211, 238, 0.2);
         }
 
         .animate-shootingStar3 {
           animation: shootingStar3 3.2s linear infinite;
           animation-delay: 0.8s;
-          box-shadow: 0 0 10px rgba(34, 211, 238, 1), 30px -30px 20px rgba(34, 211, 238, 0.5), 60px -60px 10px rgba(34, 211, 238, 0.2);
+          box-shadow:
+            0 0 10px rgba(34, 211, 238, 1),
+            30px -30px 20px rgba(34, 211, 238, 0.5),
+            60px -60px 10px rgba(34, 211, 238, 0.2);
         }
 
         .animate-shootingStar4 {
           animation: shootingStar4 2.8s linear infinite;
           animation-delay: 2.2s;
-          box-shadow: 0 0 8px rgba(34, 211, 238, 1), 20px -20px 15px rgba(34, 211, 238, 0.5), 40px -40px 8px rgba(34, 211, 238, 0.2);
+          box-shadow:
+            0 0 8px rgba(34, 211, 238, 1),
+            20px -20px 15px rgba(34, 211, 238, 0.5),
+            40px -40px 8px rgba(34, 211, 238, 0.2);
         }
 
         .animate-shootingStar5 {
           animation: shootingStar5 3.5s linear infinite;
           animation-delay: 0.3s;
-          box-shadow: 0 0 10px rgba(34, 211, 238, 1), 30px -30px 20px rgba(34, 211, 238, 0.5), 60px -60px 10px rgba(34, 211, 238, 0.2);
+          box-shadow:
+            0 0 10px rgba(34, 211, 238, 1),
+            30px -30px 20px rgba(34, 211, 238, 0.5),
+            60px -60px 10px rgba(34, 211, 238, 0.2);
         }
 
         .animate-shootingStar6 {
           animation: shootingStar6 2.7s linear infinite;
           animation-delay: 1.8s;
-          box-shadow: 0 0 8px rgba(34, 211, 238, 1), 20px -20px 15px rgba(34, 211, 238, 0.5), 40px -40px 8px rgba(34, 211, 238, 0.2);
+          box-shadow:
+            0 0 8px rgba(34, 211, 238, 1),
+            20px -20px 15px rgba(34, 211, 238, 0.5),
+            40px -40px 8px rgba(34, 211, 238, 0.2);
         }
 
         /* Additional shooting stars from the right */
@@ -957,19 +1554,28 @@ export default function Home() {
         .animate-shootingStar7 {
           animation: shootingStar7 3.3s linear infinite;
           animation-delay: 0.5s;
-          box-shadow: 0 0 10px rgba(34, 211, 238, 1), 30px -30px 20px rgba(34, 211, 238, 0.5), 60px -60px 10px rgba(34, 211, 238, 0.2);
+          box-shadow:
+            0 0 10px rgba(34, 211, 238, 1),
+            30px -30px 20px rgba(34, 211, 238, 0.5),
+            60px -60px 10px rgba(34, 211, 238, 0.2);
         }
 
         .animate-shootingStar8 {
           animation: shootingStar8 2.9s linear infinite;
           animation-delay: 2s;
-          box-shadow: 0 0 8px rgba(34, 211, 238, 1), 20px -20px 15px rgba(34, 211, 238, 0.5), 40px -40px 8px rgba(34, 211, 238, 0.2);
+          box-shadow:
+            0 0 8px rgba(34, 211, 238, 1),
+            20px -20px 15px rgba(34, 211, 238, 0.5),
+            40px -40px 8px rgba(34, 211, 238, 0.2);
         }
 
         .animate-shootingStar9 {
           animation: shootingStar9 3.1s linear infinite;
           animation-delay: 1.2s;
-          box-shadow: 0 0 10px rgba(34, 211, 238, 1), 30px -30px 20px rgba(34, 211, 238, 0.5), 60px -60px 10px rgba(34, 211, 238, 0.2);
+          box-shadow:
+            0 0 10px rgba(34, 211, 238, 1),
+            30px -30px 20px rgba(34, 211, 238, 0.5),
+            60px -60px 10px rgba(34, 211, 238, 0.2);
         }
 
         /* Sunburst rotation animation */
@@ -984,7 +1590,8 @@ export default function Home() {
 
         /* Flash animation */
         @keyframes flash {
-          0%, 100% {
+          0%,
+          100% {
             opacity: 0.3;
             transform: scale(1);
           }
@@ -1007,31 +1614,41 @@ export default function Home() {
             ),
             /* Vertical column lines for depth */
             repeating-linear-gradient(
-              90deg,
-              transparent 0px,
-              transparent 18px,
-              rgba(31, 41, 55, 0.3) 18px,
-              rgba(31, 41, 55, 0.3) 19px
-            ),
+                90deg,
+                transparent 0px,
+                transparent 18px,
+                rgba(31, 41, 55, 0.3) 18px,
+                rgba(31, 41, 55, 0.3) 19px
+              ),
             /* Main gradient */
-            linear-gradient(to right, rgba(6, 182, 212, 0.1) 0%, transparent 20%, transparent 80%, rgba(0, 0, 0, 0.3) 100%),
+            linear-gradient(
+                to right,
+                rgba(6, 182, 212, 0.1) 0%,
+                transparent 20%,
+                transparent 80%,
+                rgba(0, 0, 0, 0.3) 100%
+              ),
             linear-gradient(135deg, #4b5563 0%, #374151 20%, #1f2937 60%, #000000 100%) !important;
         }
 
         /* MASSIVE 3D DEPTH for all buildings - 200% more! */
         div[class*="bg-gray-900"]:not(:has(p)):not(:has(h1)):not(:has(h2)) {
           background:
-            linear-gradient(to right, rgba(6, 182, 212, 0.1) 0%, transparent 20%, transparent 80%, rgba(0, 0, 0, 0.3) 100%),
+            linear-gradient(
+              to right,
+              rgba(6, 182, 212, 0.1) 0%,
+              transparent 20%,
+              transparent 80%,
+              rgba(0, 0, 0, 0.3) 100%
+            ),
             linear-gradient(135deg, #4b5563 0%, #374151 20%, #1f2937 60%, #000000 100%) !important;
           box-shadow:
             /* Main depth shadow - much stronger */
             15px 0 50px rgba(0, 0, 0, 1),
             10px 0 30px rgba(0, 0, 0, 0.9),
-            /* Cyan atmospheric glow on left */
-            -4px 0 25px rgba(6, 182, 212, 0.5),
+            /* Cyan atmospheric glow on left */ -4px 0 25px rgba(6, 182, 212, 0.5),
             -8px 0 40px rgba(6, 182, 212, 0.3),
-            /* Inner shadows for dimension */
-            inset -4px 0 20px rgba(6, 182, 212, 0.3),
+            /* Inner shadows for dimension */ inset -4px 0 20px rgba(6, 182, 212, 0.3),
             inset 4px 0 15px rgba(0, 0, 0, 0.5) !important;
           border-right: 3px solid rgba(34, 211, 238, 0.8) !important;
           border-left: 1px solid rgba(107, 114, 128, 0.3) !important;
@@ -1041,18 +1658,20 @@ export default function Home() {
 
         /* Top neon strip with stronger glow */
         div[class*="bg-gray-900"]:not(:has(p)):not(:has(h1)):not(:has(h2))::before {
-          content: '';
+          content: "";
           position: absolute;
           top: 0;
           left: 0;
           right: 0;
           height: 3px;
-          background: linear-gradient(90deg,
+          background: linear-gradient(
+            90deg,
             transparent 0%,
             rgba(34, 211, 238, 0.3) 20%,
             rgba(34, 211, 238, 1) 50%,
             rgba(34, 211, 238, 0.3) 80%,
-            transparent 100%);
+            transparent 100%
+          );
           box-shadow:
             0 0 15px rgba(34, 211, 238, 1),
             0 0 30px rgba(34, 211, 238, 0.5);
@@ -1060,20 +1679,19 @@ export default function Home() {
 
         /* Enhanced right edge glow with floor lines */
         div[class*="bg-gray-900"]:not(:has(p)):not(:has(h1)):not(:has(h2))::after {
-          content: '';
+          content: "";
           position: absolute;
           top: 0;
           right: 0;
           width: 2px;
           height: 100%;
-          background:
-            repeating-linear-gradient(
-              180deg,
-              rgba(34, 211, 238, 1) 0%,
-              rgba(34, 211, 238, 0.8) 5%,
-              rgba(34, 211, 238, 0.2) 10%,
-              rgba(34, 211, 238, 0.2) 30%
-            );
+          background: repeating-linear-gradient(
+            180deg,
+            rgba(34, 211, 238, 1) 0%,
+            rgba(34, 211, 238, 0.8) 5%,
+            rgba(34, 211, 238, 0.2) 10%,
+            rgba(34, 211, 238, 0.2) 30%
+          );
           box-shadow: 0 0 10px rgba(34, 211, 238, 0.8);
         }
       `}</style>

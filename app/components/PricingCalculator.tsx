@@ -67,7 +67,9 @@ export default function PricingCalculator() {
     <section className="mt-16 w-full max-w-4xl rounded-2xl border-2 border-pink-500/70 bg-black/60 p-6 shadow-[0_0_30px_rgba(236,72,153,0.7)] backdrop-blur-md">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight text-pink-300 drop-shadow-[0_0_10px_rgba(236,72,153,0.9)]">Pricing Calculator</h2>
+          <h2 className="text-2xl font-semibold tracking-tight text-pink-300 drop-shadow-[0_0_10px_rgba(236,72,153,0.9)]">
+            Pricing Calculator
+          </h2>
           <p className="mt-1 text-sm text-cyan-200/80">
             Adjust seats, plan, and add-ons. No database or API required.
           </p>
@@ -78,7 +80,9 @@ export default function PricingCalculator() {
             type="button"
             onClick={() => setAnnual(false)}
             className={`rounded-full px-3 py-1 text-sm transition ${
-              !annual ? "bg-pink-400/20 text-pink-200 shadow-[0_0_10px_rgba(236,72,153,0.6)]" : "text-pink-300/70 hover:text-pink-200"
+              !annual
+                ? "bg-pink-400/20 text-pink-200 shadow-[0_0_10px_rgba(236,72,153,0.6)]"
+                : "text-pink-300/70 hover:text-pink-200"
             }`}
           >
             Monthly
@@ -87,7 +91,9 @@ export default function PricingCalculator() {
             type="button"
             onClick={() => setAnnual(true)}
             className={`rounded-full px-3 py-1 text-sm transition ${
-              annual ? "bg-pink-400/20 text-pink-200 shadow-[0_0_10px_rgba(236,72,153,0.6)]" : "text-pink-300/70 hover:text-pink-200"
+              annual
+                ? "bg-pink-400/20 text-pink-200 shadow-[0_0_10px_rgba(236,72,153,0.6)]"
+                : "text-pink-300/70 hover:text-pink-200"
             }`}
           >
             Annual <span className="ml-1 text-xs text-pink-300/70">(-15%)</span>
@@ -178,13 +184,17 @@ export default function PricingCalculator() {
                   type="button"
                   onClick={() => setPremiumSupport((v) => !v)}
                   className={`h-7 w-12 rounded-full border-2 transition ${
-                    premiumSupport ? "border-pink-400/70 bg-pink-400/20 shadow-[0_0_10px_rgba(236,72,153,0.6)]" : "border-pink-400/40 bg-black/40"
+                    premiumSupport
+                      ? "border-pink-400/70 bg-pink-400/20 shadow-[0_0_10px_rgba(236,72,153,0.6)]"
+                      : "border-pink-400/40 bg-black/40"
                   }`}
                   aria-label="Toggle premium support"
                 >
                   <div
                     className={`h-5 w-5 rounded-full transition ${
-                      premiumSupport ? "translate-x-6 bg-pink-500 shadow-[0_0_10px_rgba(236,72,153,1)]" : "translate-x-1 bg-pink-400/50"
+                      premiumSupport
+                        ? "translate-x-6 bg-pink-500 shadow-[0_0_10px_rgba(236,72,153,1)]"
+                        : "translate-x-1 bg-pink-400/50"
                     }`}
                   />
                 </button>
@@ -193,7 +203,8 @@ export default function PricingCalculator() {
 
             {/* Small note */}
             <p className="text-xs text-pink-300/60">
-              Tip: Try weird inputs (0 seats, 999 seats, blank number) and we&apos;ll debug behaviors together.
+              Tip: Try weird inputs (0 seats, 999 seats, blank number) and we&apos;ll debug
+              behaviors together.
             </p>
           </div>
         </div>
@@ -231,12 +242,16 @@ export default function PricingCalculator() {
 
             <div className="flex items-center justify-between">
               <span className="text-pink-300/80">Subtotal (monthly)</span>
-              <span className="text-pink-200 font-semibold tabular-nums">{formatUSD(pricing.monthlySubtotal)}</span>
+              <span className="text-pink-200 font-semibold tabular-nums">
+                {formatUSD(pricing.monthlySubtotal)}
+              </span>
             </div>
 
             <div className="flex items-center justify-between">
               <span className="text-pink-300/80">Premium Support</span>
-              <span className="text-pink-200 font-semibold tabular-nums">{formatUSD(pricing.supportAddOn)}</span>
+              <span className="text-pink-200 font-semibold tabular-nums">
+                {formatUSD(pricing.supportAddOn)}
+              </span>
             </div>
 
             <div className="mt-2 border-t border-pink-400/40 pt-3 flex items-center justify-between">
@@ -268,7 +283,7 @@ export default function PricingCalculator() {
                 alert(
                   `Plan: ${plan}\nSeats: ${pricing.safeSeats}\nBilling: ${
                     annual ? "Annual" : "Monthly"
-                  }\nTotal: ${formatUSD(pricing.billedMonthly)}/mo`
+                  }\nTotal: ${formatUSD(pricing.billedMonthly)}/mo`,
                 );
               }}
               className="rounded-lg bg-pink-400/20 border-2 border-pink-400/50 px-4 py-2 text-sm text-pink-200 hover:bg-pink-400/30 hover:shadow-[0_0_15px_rgba(236,72,153,0.6)] transition"

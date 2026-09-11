@@ -1,8 +1,5 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(npm run dev:*)",
-      "Bash(npx next lint:*)"
-    ]
+    "allow": ["Bash(npm run dev:*)", "Bash(npx next lint:*)"]
   }
 }

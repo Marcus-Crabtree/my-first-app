@@ -24,13 +24,13 @@ export default function WeatherWidget() {
     const fetchWeather = async () => {
       try {
         // Get user location from IP
-        const ipResponse = await fetch('https://ipapi.co/json/');
+        const ipResponse = await fetch("https://ipapi.co/json/");
         const ipData = await ipResponse.json();
         const { city, latitude, longitude } = ipData;
 
         // Get weather data from Open-Meteo (no API key required)
         const weatherResponse = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=3`
+          `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=3`,
         );
         const weatherData = await weatherResponse.json();
 
@@ -46,9 +46,9 @@ export default function WeatherWidget() {
         };
 
         const forecast = weatherData.daily.time.slice(0, 3).map((date: string, i: number) => ({
-          day: new Date(date).toLocaleDateString('en-US', { weekday: 'short' }),
+          day: new Date(date).toLocaleDateString("en-US", { weekday: "short" }),
           temp: Math.round(weatherData.daily.temperature_2m_max[i]),
-          condition: getWeatherCondition(weatherData.daily.weather_code[i])
+          condition: getWeatherCondition(weatherData.daily.weather_code[i]),
         }));
 
         setWeather({
@@ -57,7 +57,7 @@ export default function WeatherWidget() {
           condition: getWeatherCondition(weatherData.current.weather_code),
           humidity: weatherData.current.relative_humidity_2m,
           windSpeed: Math.round(weatherData.current.wind_speed_10m),
-          forecast
+          forecast,
         });
         setLoading(false);
       } catch (err) {
@@ -124,13 +124,20 @@ export default function WeatherWidget() {
 
       {/* Forecast */}
       <div className="border-t border-cyan-400/30 pt-2 sm:pt-3">
-        <div className="text-cyan-400 text-[10px] sm:text-xs font-semibold mb-1.5 sm:mb-2">3-Day Forecast</div>
+        <div className="text-cyan-400 text-[10px] sm:text-xs font-semibold mb-1.5 sm:mb-2">
+          3-Day Forecast
+        </div>
         <div className="grid grid-cols-3 gap-1.5 sm:gap-2 text-[10px] sm:text-xs">
           {weather.forecast.map((day, i) => (
-            <div key={i} className="bg-cyan-400/10 rounded p-1.5 sm:p-2 text-center border border-cyan-400/30">
+            <div
+              key={i}
+              className="bg-cyan-400/10 rounded p-1.5 sm:p-2 text-center border border-cyan-400/30"
+            >
               <div className="text-cyan-300 font-semibold mb-0.5 sm:mb-1">{day.day}</div>
               <div className="text-white font-bold text-xs sm:text-sm">{day.temp}°</div>
-              <div className="text-cyan-200/70 text-[9px] sm:text-[10px] mt-0.5 sm:mt-1">{day.condition}</div>
+              <div className="text-cyan-200/70 text-[9px] sm:text-[10px] mt-0.5 sm:mt-1">
+                {day.condition}
+              </div>
             </div>
           ))}
         </div>
